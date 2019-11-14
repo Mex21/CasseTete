@@ -1,10 +1,8 @@
 package CasseTete;
 
-import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.input.*;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 
 public class Controller {
 

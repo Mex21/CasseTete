@@ -18,9 +18,9 @@ public class View extends Application {
     }
 
     @Override
-    public void start(Stage arg0) {
-        final int x = 4;
-        final int y = 4;
+    public void start(Stage stage) {
+        final int x = 5;
+        final int y = 5;
         Cell[][] gridName = model.GenerateBoard(x,y);
 
         BorderPane borderPane = new BorderPane();
@@ -28,13 +28,15 @@ public class View extends Application {
 
         for (int i = 0; i < x; i++) {
             for (int j = 0; j < y; j++) {
-                Text t = new Text(" " + i + "," + j + " ");
+                //Text t = new Text("X");
+                Text t = gridName[i][j].getSymbol();
                 t.setFont(Font.font("Time new roman", 30));
                 t.setFill(Color.BLACK);
                 controller.ControllerOnDragDetected(t);
                 controller.ControllerOnDragEntered(t);
                 controller.ControllerOnDragDone(t);
-                System.out.println(gridName.getClass());
+                System.out.println(gridName[i][j].getSymbol());
+                gridPane.add(t,i,j);
             }
         }
         gridPane.setGridLinesVisible(true);
@@ -43,8 +45,12 @@ public class View extends Application {
 
         Scene scene = new Scene(borderPane, Color.LIGHTGREEN);
 
-        arg0.setTitle("Casse tête");
-        arg0.setScene(scene);
-        arg0.show();
+        stage.setTitle("Casse tête");
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }

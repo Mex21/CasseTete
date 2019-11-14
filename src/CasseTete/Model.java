@@ -10,11 +10,13 @@ public class Model extends Observable {
     private Text textO = new Text("O");
     private Text textX = new Text("X");
 
+
     private Cell[][] CreateEmptyBoard(int x, int y) {
         Cell[][] boardTab = new Cell[x][y];
         for (int i = 0; i < x; i++) {
             for (int j = 0; j < y; j++) {
-                boardTab[i][j] = new CellEmpty(i, j);
+                Text textEmpty = new Text("E");
+                boardTab[i][j] = new CellEmpty(i, j,false,textEmpty);
             }
         }
         return boardTab;
@@ -23,10 +25,10 @@ public class Model extends Observable {
 
     private Cell[][] GenerateRandomSymbol(Cell[][] boardTab) {
         //Random Fonction to do
-        boardTab[0][0] = new CellSymbol(0, 0, true, textO);
-        boardTab[0][2] = new CellSymbol(0, 2, true, textO);
-        boardTab[2][0] = new CellSymbol(2, 0, true, textX);
-        boardTab[1][2] = new CellSymbol(1, 2, true, textX);
+        boardTab[0][0] = new CellSymbol(0,0,true,new Text("O"));
+        boardTab[0][2] = new CellSymbol(0,2,true,new Text("O"));
+        boardTab[1][2] = new CellSymbol(1,2,true,new Text("X"));
+        boardTab[1][1] = new CellSymbol(1,1,true,new Text("X"));
         return boardTab;
     }
 
