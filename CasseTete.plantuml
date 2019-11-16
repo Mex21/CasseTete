@@ -1,7 +1,62 @@
 @startuml
 
-title __CASSETETE's Component Diagram__\n
+title __JAVA_PROJECT's Class Diagram__\n
 
+  namespace CasseTete {
+    abstract class CasseTete.Cell {
+    }
+  }
+  
+
+  namespace CasseTete {
+    class CasseTete.CellEmpty {
+    }
+  }
+  
+
+  namespace CasseTete {
+    class CasseTete.CellPath {
+    }
+  }
+  
+
+  namespace CasseTete {
+    class CasseTete.CellSymbol {
+    }
+  }
+  
+
+  namespace CasseTete {
+    class CasseTete.Controller {
+    }
+  }
+  
+
+  namespace CasseTete {
+    class CasseTete.Main {
+    }
+  }
+  
+
+  namespace CasseTete {
+    class CasseTete.Model {
+    }
+  }
+  
+
+  namespace CasseTete {
+    class CasseTete.View {
+    }
+  }
+  
+
+  CasseTete.CellEmpty -up-|> CasseTete.Cell
+  CasseTete.CellPath -up-|> CasseTete.Cell
+  CasseTete.CellSymbol -up-|> CasseTete.Cell
+  CasseTete.Model .up.|> java.util.Observer
+  CasseTete.Model -up-|> java.util.Observable
+  CasseTete.View -up-|> javafx.application.Application
+  CasseTete.View o-- CasseTete.Controller : controller
 
 
 right footer

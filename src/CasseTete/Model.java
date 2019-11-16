@@ -3,7 +3,7 @@ package CasseTete;
 import java.util.Observable;
 import java.util.Observer;
 
-public class Model extends Observable implements Observer {
+public class Model extends Observable {
 
     private int lastX, lastY;
     private String O = "O";
@@ -67,10 +67,5 @@ public class Model extends Observable implements Observer {
 
     public Cell[][] getBoard() {
         return board;
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-
     }
 }

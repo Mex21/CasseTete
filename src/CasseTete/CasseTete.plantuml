@@ -63,13 +63,16 @@ title __CASSETETE's Class Diagram__\n
     class CasseTete.Model {
         - O : String
         - X : String
+        - board : Cell[][]
         - lastX : int
         - lastY : int
         + GenerateBoard()
         + Model()
+        + getBoard()
         + parcoursDD()
         + startDD()
         + stopDD()
+        + update()
         - CreateEmptyBoard()
         - GenerateRandomSymbol()
     }
@@ -78,10 +81,7 @@ title __CASSETETE's Class Diagram__\n
 
   namespace CasseTete {
     class CasseTete.View {
-        - board : Cell[][]
-        + Launch()
         + View()
-        + getBoard()
         + start()
     }
   }
@@ -90,11 +90,10 @@ title __CASSETETE's Class Diagram__\n
   CasseTete.CellEmpty -up-|> CasseTete.Cell
   CasseTete.CellPath -up-|> CasseTete.Cell
   CasseTete.CellSymbol -up-|> CasseTete.Cell
+  CasseTete.Model .up.|> java.util.Observer
   CasseTete.Model -up-|> java.util.Observable
   CasseTete.View -up-|> javafx.application.Application
   CasseTete.View o-- CasseTete.Controller : controller
-  CasseTete.View o-- CasseTete.Model : model
-  CasseTete.View o-- CasseTete.View : view
 
 
 right footer
