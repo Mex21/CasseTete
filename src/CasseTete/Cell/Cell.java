@@ -1,4 +1,4 @@
-package CasseTete;
+package CasseTete.Cell;
 
 import javafx.scene.text.Text;
 

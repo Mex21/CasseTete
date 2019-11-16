@@ -1,6 +1,6 @@
-package CasseTete;
+package CasseTete.Cell;
 
-import javafx.scene.text.Text;
+import CasseTete.Cell.Cell;
 
 public class CellEmpty extends Cell {
 

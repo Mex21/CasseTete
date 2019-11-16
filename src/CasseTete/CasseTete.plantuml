@@ -3,46 +3,6 @@
 title __CASSETETE's Class Diagram__\n
 
   namespace CasseTete {
-    abstract class CasseTete.Cell {
-        - occupied : boolean
-        - symbol : String
-        - x : int
-        - y : int
-        + Cell()
-        + getSymbol()
-        + getX()
-        + getY()
-        + isOccupied()
-        + setOccupied()
-        + setSymbol()
-        + setX()
-        + setY()
-    }
-  }
-  
-
-  namespace CasseTete {
-    class CasseTete.CellEmpty {
-        + CellEmpty()
-    }
-  }
-  
-
-  namespace CasseTete {
-    class CasseTete.CellPath {
-        + CellPath()
-    }
-  }
-  
-
-  namespace CasseTete {
-    class CasseTete.CellSymbol {
-        + CellSymbol()
-    }
-  }
-  
-
-  namespace CasseTete {
     class CasseTete.Controller {
         + Controller()
         + ControllerOnDragDetected()
@@ -72,7 +32,6 @@ title __CASSETETE's Class Diagram__\n
         + parcoursDD()
         + startDD()
         + stopDD()
-        + update()
         - CreateEmptyBoard()
         - GenerateRandomSymbol()
     }
@@ -87,10 +46,6 @@ title __CASSETETE's Class Diagram__\n
   }
   
 
-  CasseTete.CellEmpty -up-|> CasseTete.Cell
-  CasseTete.CellPath -up-|> CasseTete.Cell
-  CasseTete.CellSymbol -up-|> CasseTete.Cell
-  CasseTete.Model .up.|> java.util.Observer
   CasseTete.Model -up-|> java.util.Observable
   CasseTete.View -up-|> javafx.application.Application
   CasseTete.View o-- CasseTete.Controller : controller

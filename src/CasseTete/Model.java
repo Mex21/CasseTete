@@ -1,7 +1,10 @@
 package CasseTete;
 
+import CasseTete.Cell.Cell;
+import CasseTete.Cell.CellEmpty;
+import CasseTete.Cell.CellSymbol;
+
 import java.util.Observable;
-import java.util.Observer;
 
 public class Model extends Observable {
 

@@ -3,25 +3,25 @@
 title __JAVA_PROJECT's Class Diagram__\n
 
   namespace CasseTete {
-    abstract class CasseTete.Cell {
+    abstract class CasseTete.Cell.Cell {
     }
   }
   
 
   namespace CasseTete {
-    class CasseTete.CellEmpty {
+    class CasseTete.Cell.CellEmpty {
     }
   }
   
 
   namespace CasseTete {
-    class CasseTete.CellPath {
+    class CasseTete.Cell.CellPath {
     }
   }
   
 
   namespace CasseTete {
-    class CasseTete.CellSymbol {
+    class CasseTete.Cell.CellSymbol {
     }
   }
   
@@ -50,9 +50,9 @@ title __JAVA_PROJECT's Class Diagram__\n
   }
   
 
-  CasseTete.CellEmpty -up-|> CasseTete.Cell
-  CasseTete.CellPath -up-|> CasseTete.Cell
-  CasseTete.CellSymbol -up-|> CasseTete.Cell
+  CasseTete.Cell.CellEmpty -up-|> CasseTete.Cell.Cell
+  CasseTete.Cell.CellPath -up-|> CasseTete.Cell.Cell
+  CasseTete.Cell.CellSymbol -up-|> CasseTete.Cell.Cell
   CasseTete.Model -up-|> java.util.Observable
   CasseTete.View -up-|> javafx.application.Application
   CasseTete.View o-- CasseTete.Controller : controller
