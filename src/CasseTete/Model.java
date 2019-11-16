@@ -1,64 +1,76 @@
 package CasseTete;
 
-import javafx.scene.text.Text;
-
 import java.util.Observable;
+import java.util.Observer;
 
-public class Model extends Observable {
+public class Model extends Observable implements Observer {
 
-    private int lastC, lastR;
-    private Text textO = new Text("O");
-    private Text textX = new Text("X");
+    private int lastX, lastY;
+    private String O = "O";
+    private String X = "X";
+    private Cell[][] board;
 
-
-    private Cell[][] CreateEmptyBoard(int x, int y) {
-        Cell[][] boardTab = new Cell[x][y];
-        for (int i = 0; i < x; i++) {
-            for (int j = 0; j < y; j++) {
-                Text textEmpty = new Text("E");
-                boardTab[i][j] = new CellEmpty(i, j,false,textEmpty);
-            }
-        }
-        return boardTab;
+    public Model(int x,int y) {
+        this.board = GenerateBoard(x,y);
     }
 
+    private void CreateEmptyBoard(int x, int y) {
+        board = new Cell[x][y];
+        for (int i = 0; i < x; i++) {
+            for (int j = 0; j < y; j++) {
+                board[i][j] = new CellEmpty(i, j, false, "E");
+            }
+        }
+    }
 
-    private Cell[][] GenerateRandomSymbol(Cell[][] boardTab) {
+    private void GenerateRandomSymbol() {
         //Random Fonction to do
-        boardTab[0][0] = new CellSymbol(0,0,true,new Text("O"));
-        boardTab[0][2] = new CellSymbol(0,2,true,new Text("O"));
-        boardTab[1][2] = new CellSymbol(1,2,true,new Text("X"));
-        boardTab[1][1] = new CellSymbol(1,1,true,new Text("X"));
-        return boardTab;
+        board[0][0] = new CellSymbol(0, 0, true, O);
+        board[0][2] = new CellSymbol(0, 2, true, O);
+        board[1][2] = new CellSymbol(1, 2, true, X);
+        board[1][1] = new CellSymbol(1, 1, true, X);
     }
 
     public Cell[][] GenerateBoard(int x, int y) {
-        Cell[][] board = CreateEmptyBoard(x, y);
-        GenerateRandomSymbol(board);
+        CreateEmptyBoard(x, y);
+        GenerateRandomSymbol();
+        setChanged();
+        notifyObservers();
+        return getBoard();
+    }
+
+
+    public void startDD(int x, int y) {
+        System.out.println("startDD : " + x + "-" + y);
+        Cell[][] board = getBoard();
+        if (board[x][y] instanceof CellSymbol){
+            System.out.println("C'est un symbole");
+        }
+        setChanged();
+        notifyObservers();
+    }
+
+    public void stopDD(int x, int y) {
+        System.out.println("stopDD : " + x + "-" + y + " -> " + lastX + "-" + lastY);
+        setChanged();
+        notifyObservers();
+    }
+
+    public void parcoursDD(int x, int y) {
+        // TODO
+        lastX = x;
+        lastY = y;
+        System.out.println("parcoursDD : " + x + "-" + y);
+        setChanged();
+        notifyObservers();
+    }
+
+    public Cell[][] getBoard() {
         return board;
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
 
-    public void startDD(int c, int r) {
-        System.out.println("startDD : " + c + "-" + r);
-        setChanged();
-        notifyObservers();
-    }
-
-    public void stopDD(int c, int r) {
-        // mémoriser le dernier objet renvoyé par parcoursDD pour connaitre la case de relachement
-
-        System.out.println("stopDD : " + c + "-" + r + " -> " + lastC + "-" + lastR);
-        setChanged();
-        notifyObservers();
-    }
-
-    public void parcoursDD(int c, int r) {
-        // TODO
-        lastC = c;
-        lastR = r;
-        System.out.println("parcoursDD : " + c + "-" + r);
-        setChanged();
-        notifyObservers();
     }
 }

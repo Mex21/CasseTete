@@ -5,13 +5,16 @@ title __CASSETETE's Class Diagram__\n
   namespace CasseTete {
     abstract class CasseTete.Cell {
         - occupied : boolean
+        - symbol : String
         - x : int
         - y : int
         + Cell()
+        + getSymbol()
         + getX()
         + getY()
         + isOccupied()
         + setOccupied()
+        + setSymbol()
         + setX()
         + setY()
     }
@@ -34,10 +37,7 @@ title __CASSETETE's Class Diagram__\n
 
   namespace CasseTete {
     class CasseTete.CellSymbol {
-        - symbole : Text
         + CellSymbol()
-        + getSymbole()
-        + setSymbole()
     }
   }
   
@@ -53,12 +53,20 @@ title __CASSETETE's Class Diagram__\n
   
 
   namespace CasseTete {
+    class CasseTete.Main {
+        {static} + main()
+    }
+  }
+  
+
+  namespace CasseTete {
     class CasseTete.Model {
-        - lastC : int
-        - lastR : int
-        - textO : Text
-        - textX : Text
+        - O : String
+        - X : String
+        - lastX : int
+        - lastY : int
         + GenerateBoard()
+        + Model()
         + parcoursDD()
         + startDD()
         + stopDD()
@@ -70,7 +78,10 @@ title __CASSETETE's Class Diagram__\n
 
   namespace CasseTete {
     class CasseTete.View {
+        - board : Cell[][]
+        + Launch()
         + View()
+        + getBoard()
         + start()
     }
   }
@@ -83,6 +94,7 @@ title __CASSETETE's Class Diagram__\n
   CasseTete.View -up-|> javafx.application.Application
   CasseTete.View o-- CasseTete.Controller : controller
   CasseTete.View o-- CasseTete.Model : model
+  CasseTete.View o-- CasseTete.View : view
 
 
 right footer

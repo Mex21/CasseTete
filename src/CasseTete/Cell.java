@@ -5,9 +5,9 @@ import javafx.scene.text.Text;
 public abstract class Cell {
     private int x, y;
     private boolean occupied;
-    private Text symbol;
+    private String symbol;
 
-    public Cell(int x, int y, boolean occupied, Text symbol) {
+    public Cell(int x, int y, boolean occupied, String symbol) {
         this.x = x;
         this.y = y;
         this.occupied = occupied;
@@ -38,11 +38,11 @@ public abstract class Cell {
         this.occupied = occupied;
     }
 
-    public Text getSymbol() {
+    public String getSymbol() {
         return symbol;
     }
 
-    public void setSymbol(Text symbol) {
+    public void setSymbol(String symbol) {
         this.symbol = symbol;
     }
 }

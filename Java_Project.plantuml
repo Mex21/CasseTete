@@ -33,6 +33,12 @@ title __JAVA_PROJECT's Class Diagram__\n
   
 
   namespace CasseTete {
+    class CasseTete.Main {
+    }
+  }
+  
+
+  namespace CasseTete {
     class CasseTete.Model {
     }
   }
@@ -51,6 +57,7 @@ title __JAVA_PROJECT's Class Diagram__\n
   CasseTete.View -up-|> javafx.application.Application
   CasseTete.View o-- CasseTete.Controller : controller
   CasseTete.View o-- CasseTete.Model : model
+  CasseTete.View o-- CasseTete.View : view
 
 
 right footer
