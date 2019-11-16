@@ -32,6 +32,7 @@ title __CASSETETE's Class Diagram__\n
         + parcoursDD()
         + startDD()
         + stopDD()
+        + update()
         - CreateEmptyBoard()
         - GenerateRandomSymbol()
     }
@@ -42,11 +43,15 @@ title __CASSETETE's Class Diagram__\n
     class CasseTete.View {
         + View()
         + start()
+        - setDDOnImageView()
     }
   }
   
 
+  CasseTete.Controller -up-|> java.util.Observable
+  CasseTete.Model .up.|> java.util.Observer
   CasseTete.Model -up-|> java.util.Observable
+  CasseTete.Model o-- CasseTete.Controller : controller
   CasseTete.View -up-|> javafx.application.Application
   CasseTete.View o-- CasseTete.Controller : controller
 

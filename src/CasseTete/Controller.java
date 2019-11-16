@@ -1,11 +1,14 @@
 package CasseTete;
 
+import CasseTete.Cell.CellPath;
 import javafx.event.EventHandler;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 
+import java.util.Observable;
 
-public class Controller {
+
+public class Controller extends Observable {
 
 
     public Controller() {
@@ -21,7 +24,6 @@ public class Controller {
                 content.putString(""); // non utilisé actuellement
                 db.setContent(content);
                 event.consume();
-                //model.startDD(x, y);
             }
         });
     }
@@ -30,8 +32,11 @@ public class Controller {
         imageView.setOnDragEntered(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
+                CellPath cellPath = new CellPath(x, y, false, "E");
+                setChanged();
+                notifyObservers(cellPath);
+                System.out.println("Drag detected " + x + "-" + y);
                 event.consume();
-                //model.parcoursDD(x, y);
             }
         });
     }

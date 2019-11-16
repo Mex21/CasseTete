@@ -1,37 +1,40 @@
 package CasseTete;
 
 import CasseTete.Cell.Cell;
-import CasseTete.Cell.CellEmpty;
+import CasseTete.Cell.CellPath;
 import CasseTete.Cell.CellSymbol;
 
 import java.util.Observable;
+import java.util.Observer;
 
-public class Model extends Observable {
+public class Model extends Observable implements Observer {
+    private Controller controller = new Controller();
 
     private int lastX, lastY;
-    private String O = "O";
-    private String X = "X";
+    private String O = "S1";
+    private String X = "S2";
     private Cell[][] board;
 
-    public Model(int x,int y) {
-        this.board = GenerateBoard(x,y);
+    public Model(int x, int y) {
+        this.board = GenerateBoard(x, y);
+
     }
 
     private void CreateEmptyBoard(int x, int y) {
         board = new Cell[x][y];
         for (int i = 0; i < x; i++) {
             for (int j = 0; j < y; j++) {
-                board[i][j] = new CellEmpty(i, j, false, "E");
+                board[i][j] = new CellPath(i, j, false,"E");
             }
         }
     }
 
     private void GenerateRandomSymbol() {
         //Random Fonction to do
-        board[0][0] = new CellSymbol(0, 0, true, O);
-        board[0][2] = new CellSymbol(0, 2, true, O);
-        board[1][2] = new CellSymbol(1, 2, true, X);
-        board[1][1] = new CellSymbol(1, 1, true, X);
+        board[0][0] = new CellSymbol(0, 0, O);
+        board[0][2] = new CellSymbol(0, 2, O);
+        board[1][2] = new CellSymbol(1, 2, X);
+        board[1][1] = new CellSymbol(1, 1, X);
     }
 
     public Cell[][] GenerateBoard(int x, int y) {
@@ -46,11 +49,11 @@ public class Model extends Observable {
     public void startDD(int x, int y) {
         System.out.println("startDD : " + x + "-" + y);
         Cell[][] board = getBoard();
-        if (board[x][y] instanceof CellSymbol){
-            System.out.println("C'est un symbole");
+        if (board[x][y] instanceof CellSymbol) {
         }
+        CellSymbol cellSymbol = new CellSymbol(x, y, "P");
         setChanged();
-        notifyObservers();
+        notifyObservers(cellSymbol);
     }
 
     public void stopDD(int x, int y) {
@@ -64,11 +67,19 @@ public class Model extends Observable {
         lastX = x;
         lastY = y;
         System.out.println("parcoursDD : " + x + "-" + y);
+        CellSymbol cellSymbol = new CellSymbol(x, y, "P");
         setChanged();
-        notifyObservers();
+        notifyObservers(cellSymbol);
     }
 
     public Cell[][] getBoard() {
         return board;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        int x = ((CellPath)arg).getX();
+        int y = ((CellPath)arg).getY();
+        parcoursDD(x,y);
     }
 }

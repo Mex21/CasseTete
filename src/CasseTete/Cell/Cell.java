@@ -1,16 +1,15 @@
 package CasseTete.Cell;
 
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 
 public abstract class Cell {
     private int x, y;
-    private boolean occupied;
     private String symbol;
 
-    public Cell(int x, int y, boolean occupied, String symbol) {
+    public Cell(int x, int y, String symbol) {
         this.x = x;
         this.y = y;
-        this.occupied = occupied;
         this.symbol = symbol;
     }
 
@@ -30,14 +29,6 @@ public abstract class Cell {
         this.y = y;
     }
 
-    public boolean isOccupied() {
-        return occupied;
-    }
-
-    public void setOccupied(boolean occupied) {
-        this.occupied = occupied;
-    }
-
     public String getSymbol() {
         return symbol;
     }
@@ -45,4 +36,6 @@ public abstract class Cell {
     public void setSymbol(String symbol) {
         this.symbol = symbol;
     }
+
+
 }

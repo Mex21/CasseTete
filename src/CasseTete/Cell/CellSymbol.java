@@ -1,10 +1,12 @@
 package CasseTete.Cell;
 
-import CasseTete.Cell.Cell;
 
 public class CellSymbol extends Cell {
+    private String symbol;
 
-    public CellSymbol(int x, int y, boolean occupied, String symbol) {
-        super(x, y, occupied, symbol);
+    public CellSymbol(int x, int y, String symbol) {
+        super(x, y, symbol);
     }
+
+
 }

@@ -12,14 +12,6 @@ title __JAVA_PROJECT's Class Diagram__\n
 
   namespace CasseTete {
     namespace Cell {
-      class CasseTete.Cell.CellEmpty {
-      }
-    }
-  }
-  
-
-  namespace CasseTete {
-    namespace Cell {
       class CasseTete.Cell.CellPath {
       }
     }
@@ -58,10 +50,12 @@ title __JAVA_PROJECT's Class Diagram__\n
   }
   
 
-  CasseTete.Cell.CellEmpty -up-|> CasseTete.Cell.Cell
   CasseTete.Cell.CellPath -up-|> CasseTete.Cell.Cell
   CasseTete.Cell.CellSymbol -up-|> CasseTete.Cell.Cell
+  CasseTete.Controller -up-|> java.util.Observable
+  CasseTete.Model .up.|> java.util.Observer
   CasseTete.Model -up-|> java.util.Observable
+  CasseTete.Model o-- CasseTete.Controller : controller
   CasseTete.View -up-|> javafx.application.Application
   CasseTete.View o-- CasseTete.Controller : controller
 
