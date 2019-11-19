@@ -23,6 +23,10 @@ public class Controller extends Observable {
                 ClipboardContent content = new ClipboardContent();
                 content.putString(""); // non utilisé actuellement
                 db.setContent(content);
+                System.out.println("Start DD Detected " + x + "-" + y);
+                Coordinate coordinate = new Coordinate(x,y,1);
+                setChanged();
+                notifyObservers(coordinate);
                 event.consume();
             }
         });
@@ -32,9 +36,9 @@ public class Controller extends Observable {
         imageView.setOnDragEntered(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
-                CellPath cellPath = new CellPath(x, y, false, "E");
+                Coordinate coordinate = new Coordinate(x,y,2);
                 setChanged();
-                notifyObservers(cellPath);
+                notifyObservers(coordinate);
                 System.out.println("Drag detected " + x + "-" + y);
                 event.consume();
             }
@@ -45,8 +49,11 @@ public class Controller extends Observable {
         imageView.setOnDragDone(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
+                System.out.println("Stop DD Detected " + x + "-" + y);
+                Coordinate coordinate = new Coordinate(x,y,3);
+                setChanged();
+                notifyObservers(coordinate);
                 event.consume();
-                //model.stopDD(x, y);
             }
         });
     }

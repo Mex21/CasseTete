@@ -46,7 +46,7 @@ public class Model extends Observable implements Observer {
     }
 
 
-    public void startDD(int x, int y) {
+    public void startDD(int x, int y,Cell cell) {
         System.out.println("startDD : " + x + "-" + y);
         Cell[][] board = getBoard();
         if (board[x][y] instanceof CellSymbol) {
@@ -78,8 +78,34 @@ public class Model extends Observable implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        int x = ((CellPath)arg).getX();
-        int y = ((CellPath)arg).getY();
-        parcoursDD(x,y);
+
+            int x = ((Coordinate)arg).getX();
+            int y = ((Coordinate)arg).getY();
+            int type = ((Coordinate)arg).getType();
+            Cell cell = board[x][y];
+            System.out.println("Update");
+            switch (type){
+                case 1:
+                    if (cell instanceof CellSymbol){
+                        System.out.println("C'est un symbole");
+                    }else if (cell instanceof CellPath){
+                        System.out.println("Commencez le chemin sur un symbole !!");
+                    }
+                    break;
+                case 2:
+                    if (cell instanceof CellSymbol){
+                        System.out.println("C'est un symbol");
+                    }else if (cell instanceof CellPath){
+                        System.out.println("Tracez Chemin");
+                    }
+                    break;
+                case 3:
+                    if (cell instanceof CellSymbol){
+                        System.out.println("Bien");
+                    }else if (cell instanceof CellPath){
+                        System.out.println("Vous devez finir sur un symbole");
+                    }
+                    break;
+            }
     }
 }
