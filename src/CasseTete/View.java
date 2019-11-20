@@ -1,11 +1,19 @@
 package CasseTete;
 
 import CasseTete.Cell.Cell;
+import CasseTete.Cell.CellPath;
 import CasseTete.Cell.CellSymbol;
 import javafx.application.Application;
+
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -14,11 +22,8 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class View extends Application {
-
-    private Controller controller = new Controller();
-
-
-    public View() {
+    Model model;
+	public View() {
 
     }
 
@@ -27,19 +32,26 @@ public class View extends Application {
         final int x = 5;
         final int y = 5;
 
-        Model model = new Model(x, y);
-
-        controller.addObserver(model);
+        model = new Model(x, y);
 
         Cell[][] board = model.getBoard();
         BorderPane borderPane = new BorderPane();
         GridPane gridPane = new GridPane();
+        
 
         for (int i = 0; i < x; i++) {
             for (int j = 0; j < y; j++) {
-                String symbolText = board[i][j].getSymbol();
-                Image image = new Image("File:img/" + symbolText + ".png");
-                System.out.println(symbolText);
+            	Image image = null;
+            	if(board[i][j] instanceof CellSymbol) {
+            		String symbolText = ((CellSymbol) board[i][j]).getSymbol();
+                    image = new Image("File:img/" + symbolText + ".png");
+                    System.out.println(symbolText);	
+            	}
+            	else if (board[i][j] instanceof CellPath) {
+            		 image = new Image("File:img/" + "E" + ".png");
+            		
+            	}
+                
                 ImageView imageView = new ImageView(image);
                 setDDOnImageView(imageView, i, j);
                 gridPane.add(imageView, i, j);
@@ -61,10 +73,10 @@ public class View extends Application {
             @Override
             public void update(Observable o, Object arg) {
                 if (o == model) {
-                    int x_cell = ((CellSymbol) arg).getX();
-                    int y_cell = ((CellSymbol) arg).getY();
-                    String symbol = ((CellSymbol) arg).getSymbol();
-                    Image image = new Image("File:img/" + symbol + ".png");
+                    int x_cell = ((CellPath) arg).getX();
+                    int y_cell = ((CellPath) arg).getY();
+                    //String symbol = ((CellPath) arg).getSymbol();
+                    Image image = new Image("File:img/" + "P" + ".png");
                     ImageView imageView = new ImageView(image);
                     setDDOnImageView(imageView, x_cell, y_cell);
                     gridPane.add(imageView, x_cell, y_cell);
@@ -73,9 +85,45 @@ public class View extends Application {
         });
     }
 
+
+    public void ControllerOnDragDetected(ImageView imageView, int x, int y) {
+        imageView.setOnDragDetected(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                Dragboard db = imageView.startDragAndDrop(TransferMode.ANY);
+                ClipboardContent content = new ClipboardContent();
+                content.putString(""); // non utilisé actuellement
+                db.setContent(content);
+                model.startDD(x, y);
+                System.out.println("Start DD Detected " + x + "-" + y);
+                event.consume();
+            }
+        });
+    }
+
+    public void ControllerOnDragEntered(ImageView imageView, int x, int y) {
+        imageView.setOnDragEntered(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                System.out.println("Drag detected " + x + "-" + y);
+                model.parcoursDD(x, y);
+                event.consume();
+            }
+        });
+    }
+
+    public void ControllerOnDragDone(ImageView imageView, int x, int y) {
+        imageView.setOnDragDone(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                System.out.println("Stop DD Detected " + x + "-" + y);                
+                event.consume();
+            }
+        });
+    }
     private void setDDOnImageView(ImageView imageView, int x, int y) {
-        controller.ControllerOnDragDetected(imageView, x, y);
-        controller.ControllerOnDragEntered(imageView, x, y);
-        controller.ControllerOnDragDone(imageView, x, y);
+        ControllerOnDragDetected(imageView, x, y);
+        ControllerOnDragEntered(imageView, x, y);
+        ControllerOnDragDone(imageView, x, y);
     }
 }

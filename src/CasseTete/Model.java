@@ -4,17 +4,17 @@ import CasseTete.Cell.Cell;
 import CasseTete.Cell.CellPath;
 import CasseTete.Cell.CellSymbol;
 
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-public class Model extends Observable implements Observer {
-    private Controller controller = new Controller();
+public class Model extends Observable {
 
     private int lastX, lastY;
     private String O = "S1";
     private String X = "S2";
     private Cell[][] board;
-
+    private ArrayList<Cell> pathList;
     public Model(int x, int y) {
         this.board = GenerateBoard(x, y);
 
@@ -22,9 +22,11 @@ public class Model extends Observable implements Observer {
 
     private void CreateEmptyBoard(int x, int y) {
         board = new Cell[x][y];
+        pathList = new ArrayList();
+        
         for (int i = 0; i < x; i++) {
             for (int j = 0; j < y; j++) {
-                board[i][j] = new CellPath(i, j, false,"E");
+                board[i][j] = new CellPath(i, j,PathCoordinate.CUR, PathCoordinate.CUR);
             }
         }
     }
@@ -45,15 +47,27 @@ public class Model extends Observable implements Observer {
         return getBoard();
     }
 
+    public boolean isEmpty(Cell c) {
+    	if(c instanceof CellPath) {
+    		if((((CellPath)c).getPathX()) == PathCoordinate.CUR && ((CellPath)c).getPathY() == PathCoordinate.CUR) {
+    			System.out.println("derp");
+    			return true;
+    			
+    		}
+    	}
+    	System.out.println("henlo");
+    	return false;
+    }
 
-    public void startDD(int x, int y,Cell cell) {
+    public void startDD(int x, int y) {
         System.out.println("startDD : " + x + "-" + y);
         Cell[][] board = getBoard();
-        if (board[x][y] instanceof CellSymbol) {
+        Cell cell = board[x][y];
+        if (cell instanceof CellSymbol) {
+        	System.out.println("NewList");
+        	pathList.add(cell);
         }
-        CellSymbol cellSymbol = new CellSymbol(x, y, "P");
-        setChanged();
-        notifyObservers(cellSymbol);
+       
     }
 
     public void stopDD(int x, int y) {
@@ -64,48 +78,34 @@ public class Model extends Observable implements Observer {
 
     public void parcoursDD(int x, int y) {
         // TODO
-        lastX = x;
-        lastY = y;
-        System.out.println("parcoursDD : " + x + "-" + y);
-        CellSymbol cellSymbol = new CellSymbol(x, y, "P");
-        setChanged();
-        notifyObservers(cellSymbol);
-    }
+    	CellPath cellPath = null;
+    	if(isEmpty(board[x][y])) {
+    			lastX = x;
+    			lastY = y;
+    			int listLength = pathList.size()-1;
+    			Cell previousCell = pathList.get(listLength);
+            if(previousCell instanceof CellSymbol) {
+            	int previousX = previousCell.getX();
+            	int previousY = previousCell.getY();
+            	int nextX = x - previousX;
+            	int nextY = y - previousY;
+            	PathCoordinate pathX = PathCoordinate.NEG;
+                PathCoordinate pathY = PathCoordinate.CUR;
+                cellPath = new CellPath(x, y, pathX, pathY);
+                board[x][y] = cellPath;
+            }
+    	}
+            System.out.println("parcoursDD : " + x + "-" + y);
+            
+            setChanged();
+            notifyObservers(cellPath);
+        	
+    	}
+        
 
     public Cell[][] getBoard() {
         return board;
     }
 
-    @Override
-    public void update(Observable o, Object arg) {
-
-            int x = ((Coordinate)arg).getX();
-            int y = ((Coordinate)arg).getY();
-            int type = ((Coordinate)arg).getType();
-            Cell cell = board[x][y];
-            System.out.println("Update");
-            switch (type){
-                case 1:
-                    if (cell instanceof CellSymbol){
-                        System.out.println("C'est un symbole");
-                    }else if (cell instanceof CellPath){
-                        System.out.println("Commencez le chemin sur un symbole !!");
-                    }
-                    break;
-                case 2:
-                    if (cell instanceof CellSymbol){
-                        System.out.println("C'est un symbol");
-                    }else if (cell instanceof CellPath){
-                        System.out.println("Tracez Chemin");
-                    }
-                    break;
-                case 3:
-                    if (cell instanceof CellSymbol){
-                        System.out.println("Bien");
-                    }else if (cell instanceof CellPath){
-                        System.out.println("Vous devez finir sur un symbole");
-                    }
-                    break;
-            }
-    }
+    
 }
