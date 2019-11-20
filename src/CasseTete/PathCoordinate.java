@@ -1,18 +1,28 @@
 package CasseTete;
 
-public enum PathCoordinate {
-    NEG(-1),
-    CUR(0),
-    POS(1);
+public class PathCoordinate {
 
-    private final int value;
+    private int x,y;
 
-    PathCoordinate(int value) {
-        this.value=value;
+    public PathCoordinate(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
-    public int getValue() {
-        return value;
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 }
 

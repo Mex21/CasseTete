@@ -4,28 +4,28 @@ import CasseTete.PathCoordinate;
 
 public class CellPath extends Cell {
     
-	PathCoordinate pathX, pathY;
+	private PathCoordinate pathEntry, pathExit;
 
-    public PathCoordinate getPathX() {
-		return pathX;
+    public PathCoordinate getPathEntry() {
+		return pathEntry;
 	}
 
-	public void setPathX(PathCoordinate pathX) {
-		this.pathX = pathX;
+	public void setPathX(PathCoordinate pathEntry) {
+		this.pathEntry = pathEntry;
 	}
 
-	public PathCoordinate getPathY() {
-		return pathY;
+	public PathCoordinate getPathExit() {
+		return pathExit;
 	}
 
-	public void setPathY(PathCoordinate pathY) {
-		this.pathY = pathY;
+	public void setPathY(PathCoordinate pathEntry) {
+		this.pathEntry = pathEntry;
 	}
 
-	public CellPath(int x, int y,PathCoordinate pathX, PathCoordinate pathY) {
+	public CellPath(int x, int y,PathCoordinate pathEntry, PathCoordinate pathExit) {
         super(x, y);
-        this.pathX  = pathX;
-        this.pathY = pathY;
+        this.pathEntry  = pathEntry;
+        this.pathExit = pathExit;
         
     }
 }

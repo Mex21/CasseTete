@@ -22,7 +22,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class View extends Application {
-    Model model;
+    private Model model;
 	public View() {
 
     }
@@ -73,20 +73,22 @@ public class View extends Application {
             @Override
             public void update(Observable o, Object arg) {
                 if (o == model) {
-                    int x_cell = ((CellPath) arg).getX();
-                    int y_cell = ((CellPath) arg).getY();
-                    //String symbol = ((CellPath) arg).getSymbol();
-                    Image image = new Image("File:img/" + "P" + ".png");
-                    ImageView imageView = new ImageView(image);
-                    setDDOnImageView(imageView, x_cell, y_cell);
-                    gridPane.add(imageView, x_cell, y_cell);
+                    if (arg != null) {
+                        int x_cell = ((CellPath) arg).getX();
+                        int y_cell = ((CellPath) arg).getY();
+                        //String symbol = ((CellPath) arg).getSymbol();
+                        Image image = new Image("File:img/" + "P" + ".png");
+                        ImageView imageView = new ImageView(image);
+                        setDDOnImageView(imageView, x_cell, y_cell);
+                        gridPane.add(imageView, x_cell, y_cell);
+                    }
                 }
             }
         });
     }
 
 
-    public void ControllerOnDragDetected(ImageView imageView, int x, int y) {
+    private void ControllerOnDragDetected(ImageView imageView, int x, int y) {
         imageView.setOnDragDetected(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -101,7 +103,7 @@ public class View extends Application {
         });
     }
 
-    public void ControllerOnDragEntered(ImageView imageView, int x, int y) {
+    private void ControllerOnDragEntered(ImageView imageView, int x, int y) {
         imageView.setOnDragEntered(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
@@ -112,11 +114,12 @@ public class View extends Application {
         });
     }
 
-    public void ControllerOnDragDone(ImageView imageView, int x, int y) {
+    private void ControllerOnDragDone(ImageView imageView, int x, int y) {
         imageView.setOnDragDone(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
-                System.out.println("Stop DD Detected " + x + "-" + y);                
+                System.out.println("Stop DD Detected " + x + "-" + y);
+                model.stopDD(x,y);
                 event.consume();
             }
         });

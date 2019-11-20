@@ -6,7 +6,6 @@ import CasseTete.Cell.CellSymbol;
 
 import java.util.ArrayList;
 import java.util.Observable;
-import java.util.Observer;
 
 public class Model extends Observable {
 
@@ -22,11 +21,12 @@ public class Model extends Observable {
 
     private void CreateEmptyBoard(int x, int y) {
         board = new Cell[x][y];
-        pathList = new ArrayList();
+        pathList = new ArrayList<>();
+        PathCoordinate p = new PathCoordinate(0,0);
         
         for (int i = 0; i < x; i++) {
             for (int j = 0; j < y; j++) {
-                board[i][j] = new CellPath(i, j,PathCoordinate.CUR, PathCoordinate.CUR);
+                board[i][j] = new CellPath(i, j,p,p);
             }
         }
     }
@@ -39,7 +39,7 @@ public class Model extends Observable {
         board[1][1] = new CellSymbol(1, 1, X);
     }
 
-    public Cell[][] GenerateBoard(int x, int y) {
+    private Cell[][] GenerateBoard(int x, int y) {
         CreateEmptyBoard(x, y);
         GenerateRandomSymbol();
         setChanged();
@@ -47,58 +47,58 @@ public class Model extends Observable {
         return getBoard();
     }
 
-    public boolean isEmpty(Cell c) {
+    private boolean isEmpty(Cell c) {
     	if(c instanceof CellPath) {
-    		if((((CellPath)c).getPathX()) == PathCoordinate.CUR && ((CellPath)c).getPathY() == PathCoordinate.CUR) {
-    			System.out.println("derp");
+    		if((((CellPath)c).getPathEntry().getX()) == 0 & ((CellPath)c).getPathEntry().getY() == 0 & ((CellPath)c).getPathExit().getX() == 0 & ((CellPath)c).getPathExit().getY() == 0) {
+    			//System.out.println("derp");
     			return true;
     			
     		}
     	}
-    	System.out.println("henlo");
+    	//System.out.println("henlo");
     	return false;
     }
 
     public void startDD(int x, int y) {
-        System.out.println("startDD : " + x + "-" + y);
+        //System.out.println("startDD : " + x + "-" + y);
         Cell[][] board = getBoard();
         Cell cell = board[x][y];
         if (cell instanceof CellSymbol) {
-        	System.out.println("NewList");
+        	//System.out.println("NewList");
         	pathList.add(cell);
         }
-       
     }
 
     public void stopDD(int x, int y) {
-        System.out.println("stopDD : " + x + "-" + y + " -> " + lastX + "-" + lastY);
-        setChanged();
-        notifyObservers();
+        //System.out.println("stopDD : " + x + "-" + y + " -> " + lastX + "-" + lastY);
+        //setChanged();
+        //notifyObservers();
     }
 
     public void parcoursDD(int x, int y) {
-        // TODO
     	CellPath cellPath = null;
+        System.out.println("parcoursDD1 : " + x + "-" + y);
     	if(isEmpty(board[x][y])) {
-    			lastX = x;
-    			lastY = y;
-    			int listLength = pathList.size()-1;
-    			Cell previousCell = pathList.get(listLength);
-            if(previousCell instanceof CellSymbol) {
-            	int previousX = previousCell.getX();
-            	int previousY = previousCell.getY();
-            	int nextX = x - previousX;
-            	int nextY = y - previousY;
-            	PathCoordinate pathX = PathCoordinate.NEG;
-                PathCoordinate pathY = PathCoordinate.CUR;
+            lastX = x;
+            lastY = y;
+            int listLength = pathList.size() - 1;
+            System.out.println(listLength);
+            Cell previousCell = pathList.get(listLength);
+            if (previousCell instanceof CellSymbol) {
+                int previousX = previousCell.getX();
+                int previousY = previousCell.getY();
+                int nextX = x - previousX;
+                int nextY = y - previousY;
+                PathCoordinate pathX = new PathCoordinate(0,1);
+                PathCoordinate pathY = new PathCoordinate(0,0);
                 cellPath = new CellPath(x, y, pathX, pathY);
                 board[x][y] = cellPath;
             }
-    	}
-            System.out.println("parcoursDD : " + x + "-" + y);
+        }
+    	System.out.println("parcoursDD2 : " + x + "-" + y);
             
-            setChanged();
-            notifyObservers(cellPath);
+        setChanged();
+    	notifyObservers(cellPath);
         	
     	}
         
