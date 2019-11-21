@@ -2,58 +2,65 @@
 
 title __CASSETETE's Class Diagram__\n
 
-  namespace CasseTete {
-    class CasseTete.Controller {
-        + Controller()
-        + ControllerOnDragDetected()
-        + ControllerOnDragDone()
-        + ControllerOnDragEntered()
+
+    namespace CasseTete {
+      class CasseTete.Controller {
+          + Controller()
+      }
     }
-  }
+
   
 
-  namespace CasseTete {
-    class CasseTete.Main {
-        {static} + main()
+
+    namespace CasseTete {
+      class CasseTete.Model {
+          - O : String
+          - X : String
+          - board : Cell[][]
+          - lastX : int
+          - lastY : int
+          + Model()
+          + getBoard()
+          + parcoursDD()
+          + startDD()
+          + stopDD()
+          - CreateEmptyBoard()
+          - GenerateBoard()
+          - GenerateRandomSymbol()
+      }
     }
-  }
+
   
 
-  namespace CasseTete {
-    class CasseTete.Model {
-        - O : String
-        - X : String
-        - board : Cell[][]
-        - lastX : int
-        - lastY : int
-        + GenerateBoard()
-        + Model()
-        + getBoard()
-        + parcoursDD()
-        + startDD()
-        + stopDD()
-        + update()
-        - CreateEmptyBoard()
-        - GenerateRandomSymbol()
+
+    namespace CasseTete {
+      enum PathCoordinate {
+        CUR
+        NEG
+        POS
+        value
+      }
     }
-  }
+
   
 
-  namespace CasseTete {
-    class CasseTete.View {
-        + View()
-        + start()
-        - setDDOnImageView()
+
+    namespace CasseTete {
+      class CasseTete.View {
+          + View()
+          + start()
+          - ControllerOnDragDetected()
+          - ControllerOnDragDone()
+          - ControllerOnDragEntered()
+          - setDDOnImageView()
+      }
     }
-  }
+
   
 
-  CasseTete.Controller -up-|> java.util.Observable
-  CasseTete.Model .up.|> java.util.Observer
   CasseTete.Model -up-|> java.util.Observable
-  CasseTete.Model o-- CasseTete.Controller : controller
   CasseTete.View -up-|> javafx.application.Application
-  CasseTete.View o-- CasseTete.Controller : controller
+  CasseTete.View o-- CasseTete.Model : model
 
 
 right footer
