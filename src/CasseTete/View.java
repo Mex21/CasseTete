@@ -4,16 +4,11 @@ import CasseTete.Cell.Cell;
 import CasseTete.Cell.CellPath;
 import CasseTete.Cell.CellSymbol;
 import javafx.application.Application;
-
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -22,8 +17,10 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class View extends Application {
+
     private Model model;
-	public View() {
+
+    public View() {
 
     }
 
@@ -37,21 +34,15 @@ public class View extends Application {
         Cell[][] board = model.getBoard();
         BorderPane borderPane = new BorderPane();
         GridPane gridPane = new GridPane();
-        
 
         for (int i = 0; i < x; i++) {
             for (int j = 0; j < y; j++) {
-            	Image image = null;
-            	if(board[i][j] instanceof CellSymbol) {
-            		String symbolText = ((CellSymbol) board[i][j]).getSymbol();
+                Cell cell = board[i][j];
+                Image image = new Image("File:img/" + "E" + ".png");
+                if (cell instanceof CellSymbol) {
+                    String symbolText = ((CellSymbol) cell).getSymbol();
                     image = new Image("File:img/" + symbolText + ".png");
-                    System.out.println(symbolText);	
-            	}
-            	else if (board[i][j] instanceof CellPath) {
-            		 image = new Image("File:img/" + "E" + ".png");
-            		
-            	}
-                
+                }
                 ImageView imageView = new ImageView(image);
                 setDDOnImageView(imageView, i, j);
                 gridPane.add(imageView, i, j);
@@ -59,7 +50,7 @@ public class View extends Application {
             }
         }
         gridPane.setGridLinesVisible(true);
-        System.out.println(gridPane.getChildren().toString());
+        //System.out.println(gridPane.getChildren().toString());
 
         borderPane.setCenter(gridPane);
 
@@ -72,21 +63,25 @@ public class View extends Application {
         model.addObserver(new Observer() {
             @Override
             public void update(Observable o, Object arg) {
-                if (o == model) {
-                    if (arg != null) {
-                        int x_cell = ((CellPath) arg).getX();
-                        int y_cell = ((CellPath) arg).getY();
-                        //String symbol = ((CellPath) arg).getSymbol();
-                        Image image = new Image("File:img/" + "P" + ".png");
-                        ImageView imageView = new ImageView(image);
-                        setDDOnImageView(imageView, x_cell, y_cell);
-                        gridPane.add(imageView, x_cell, y_cell);
-                    }
+                if (arg != null) {
+                    //System.out.println("model observer");
+                    int x_cell = ((CellPath) arg).getX();
+                    int y_cell = ((CellPath) arg).getY();
+                    String text = CellPathToImg((CellPath)arg);
+                    Image image = new Image("File:img/" + text + ".png");
+                    ImageView imageView = new ImageView(image);
+                    setDDOnImageView(imageView, x_cell, y_cell);
+                    gridPane.add(imageView, x_cell, y_cell);
                 }
             }
         });
     }
 
+    private void setDDOnImageView(ImageView imageView, int x, int y) {
+        ControllerOnDragDetected(imageView, x, y);
+        ControllerOnDragEntered(imageView, x, y);
+        ControllerOnDragDone(imageView, x, y);
+    }
 
     private void ControllerOnDragDetected(ImageView imageView, int x, int y) {
         imageView.setOnDragDetected(new EventHandler<MouseEvent>() {
@@ -107,8 +102,8 @@ public class View extends Application {
         imageView.setOnDragEntered(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
-                System.out.println("Drag detected " + x + "-" + y);
                 model.parcoursDD(x, y);
+                System.out.println("Drag detected " + x + "-" + y);
                 event.consume();
             }
         });
@@ -119,14 +114,19 @@ public class View extends Application {
             @Override
             public void handle(DragEvent event) {
                 System.out.println("Stop DD Detected " + x + "-" + y);
-                model.stopDD(x,y);
                 event.consume();
             }
         });
     }
-    private void setDDOnImageView(ImageView imageView, int x, int y) {
-        ControllerOnDragDetected(imageView, x, y);
-        ControllerOnDragEntered(imageView, x, y);
-        ControllerOnDragDone(imageView, x, y);
+
+    private String CellPathToImg (CellPath cell){
+        int EntryX = cell.getPathEntry().getX();
+        int EntryY = cell.getPathEntry().getY();
+        int ExitX = cell.getPathExit().getX();
+        int ExitY = cell.getPathExit().getY();
+        String s = EntryX+"_"+EntryY+"_"+ExitX+"_"+ExitY;
+        return s;
     }
+
+
 }

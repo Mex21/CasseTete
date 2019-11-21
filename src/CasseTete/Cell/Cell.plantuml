@@ -5,14 +5,11 @@ title __CELL's Class Diagram__\n
   namespace CasseTete {
     namespace Cell {
       abstract class CasseTete.Cell.Cell {
-          - symbol : String
           - x : int
           - y : int
           + Cell()
-          + getSymbol()
           + getX()
           + getY()
-          + setSymbol()
           + setX()
           + setY()
       }
@@ -23,8 +20,11 @@ title __CELL's Class Diagram__\n
   namespace CasseTete {
     namespace Cell {
       class CasseTete.Cell.CellPath {
-          - occupied : boolean
           + CellPath()
+          + getPathEntry()
+          + getPathExit()
+          + setPathX()
+          + setPathY()
       }
     }
   }
@@ -35,12 +35,16 @@ title __CELL's Class Diagram__\n
       class CasseTete.Cell.CellSymbol {
           - symbol : String
           + CellSymbol()
+          + getSymbol()
+          + setSymbol()
       }
     }
   }
   
 
   CasseTete.Cell.CellPath -up-|> CasseTete.Cell.Cell
+  CasseTete.Cell.CellPath o-- CasseTete.PathCoordinate : pathEntry
+  CasseTete.Cell.CellPath o-- CasseTete.PathCoordinate : pathExit
   CasseTete.Cell.CellSymbol -up-|> CasseTete.Cell.Cell
 
 

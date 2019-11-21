@@ -24,5 +24,6 @@ public class PathCoordinate {
     public void setY(int y) {
         this.y = y;
     }
+
 }
 

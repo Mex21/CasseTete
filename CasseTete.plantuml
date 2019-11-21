@@ -33,13 +33,13 @@ title __JAVA_PROJECT's Class Diagram__\n
   
 
   namespace CasseTete {
-    class CasseTete.Main {
+    class CasseTete.Model {
     }
   }
   
 
   namespace CasseTete {
-    class CasseTete.Model {
+    class CasseTete.PathCoordinate {
     }
   }
   
@@ -51,13 +51,12 @@ title __JAVA_PROJECT's Class Diagram__\n
   
 
   CasseTete.Cell.CellPath -up-|> CasseTete.Cell.Cell
+  CasseTete.Cell.CellPath o-- CasseTete.PathCoordinate : pathEntry
+  CasseTete.Cell.CellPath o-- CasseTete.PathCoordinate : pathExit
   CasseTete.Cell.CellSymbol -up-|> CasseTete.Cell.Cell
-  CasseTete.Controller -up-|> java.util.Observable
-  CasseTete.Model .up.|> java.util.Observer
   CasseTete.Model -up-|> java.util.Observable
-  CasseTete.Model o-- CasseTete.Controller : controller
   CasseTete.View -up-|> javafx.application.Application
-  CasseTete.View o-- CasseTete.Controller : controller
+  CasseTete.View o-- CasseTete.Model : model
 
 
 right footer

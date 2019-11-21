@@ -5,16 +5,6 @@ title __CASSETETE's Class Diagram__\n
   namespace CasseTete {
     class CasseTete.Controller {
         + Controller()
-        + ControllerOnDragDetected()
-        + ControllerOnDragDone()
-        + ControllerOnDragEntered()
-    }
-  }
-  
-
-  namespace CasseTete {
-    class CasseTete.Main {
-        {static} + main()
     }
   }
   
@@ -26,15 +16,30 @@ title __CASSETETE's Class Diagram__\n
         - board : Cell[][]
         - lastX : int
         - lastY : int
-        + GenerateBoard()
+        - pathList : ArrayList<Cell>
         + Model()
         + getBoard()
         + parcoursDD()
         + startDD()
         + stopDD()
-        + update()
         - CreateEmptyBoard()
+        - GenerateBoard()
         - GenerateRandomSymbol()
+        - checkSymbol()
+        - isEmpty()
+    }
+  }
+  
+
+  namespace CasseTete {
+    class CasseTete.PathCoordinate {
+        - x : int
+        - y : int
+        + PathCoordinate()
+        + getX()
+        + getY()
+        + setX()
+        + setY()
     }
   }
   
@@ -43,17 +48,18 @@ title __CASSETETE's Class Diagram__\n
     class CasseTete.View {
         + View()
         + start()
+        - CellPathToImg()
+        - ControllerOnDragDetected()
+        - ControllerOnDragDone()
+        - ControllerOnDragEntered()
         - setDDOnImageView()
     }
   }
   
 
-  CasseTete.Controller -up-|> java.util.Observable
-  CasseTete.Model .up.|> java.util.Observer
   CasseTete.Model -up-|> java.util.Observable
-  CasseTete.Model o-- CasseTete.Controller : controller
   CasseTete.View -up-|> javafx.application.Application
-  CasseTete.View o-- CasseTete.Controller : controller
+  CasseTete.View o-- CasseTete.Model : model
 
 
 right footer
