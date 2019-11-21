@@ -6,7 +6,6 @@ import CasseTete.Cell.CellSymbol;
 
 import java.util.ArrayList;
 import java.util.Observable;
-import java.util.Observer;
 
 public class Model extends Observable {
 
@@ -25,7 +24,7 @@ public class Model extends Observable {
     private void CreateEmptyBoard(int x, int y) {
         board = new Cell[x][y];
         PathCoordinate p = new PathCoordinate(0,0);
-        pathList = new ArrayList();
+        pathList = new ArrayList<>();
         for (int i = 0; i < x; i++) {
             for (int j = 0; j < y; j++) {
                 board[i][j] = new CellPath(i, j, p,p);
@@ -52,11 +51,10 @@ public class Model extends Observable {
     public void startDD(int x, int y) {
         System.out.println("startDD : " + x + "-" + y);
         Cell[][] board = getBoard();
-        if (board[x][y] instanceof CellSymbol) {
+        Cell cell = board[x][y];
+        if (cell instanceof CellSymbol) {
+            pathList.add(cell);
         }
-        CellSymbol cellSymbol = new CellSymbol(x, y, "P");
-        setChanged();
-        notifyObservers(cellSymbol);
     }
 
     public void stopDD(int x, int y) {
@@ -64,13 +62,11 @@ public class Model extends Observable {
         setChanged();
         notifyObservers();
     }
+
     private boolean isEmpty(Cell c) {
         if(c instanceof CellPath) {
-            if((((CellPath)c).getPathEntry().getX()) == 0 & ((CellPath)c).getPathEntry().getY() == 0 & ((CellPath)c).getPathExit().getX() == 0 & ((CellPath)c).getPathExit().getY() == 0) {
-                //System.out.println("derp");
-                return true;
-
-            }
+            //System.out.println("derp");
+            return (((CellPath) c).getPathEntry().getX()) == 0 & ((CellPath) c).getPathEntry().getY() == 0 & ((CellPath) c).getPathExit().getX() == 0 & ((CellPath) c).getPathExit().getY() == 0;
         }
         //System.out.println("henlo");
         return false;
@@ -95,12 +91,14 @@ public class Model extends Observable {
                 PathCoordinate pathY = new PathCoordinate(0,0);
                 cellPath = new CellPath(x, y, pathX, pathY);
                 board[x][y] = cellPath;
+                setChanged();
+                notifyObservers(cellPath);
             }
         }
     	else if(board[x][y] instanceof CellSymbol) {
     		System.out.println(((CellSymbol) pathList.get(0)).getSymbol());
     		System.out.println(((CellSymbol) board[x][y]).getSymbol());
-    		if(checkSymbol((((CellSymbol) pathList.get(0)).getSymbol()), (((CellSymbol) board[x][y]).getSymbol())) == false) {
+    		if(!checkSymbol((((CellSymbol) pathList.get(0)).getSymbol()), (((CellSymbol) board[x][y]).getSymbol()))) {
     	        System.out.println("WTF ERROR");
     	       }
     	    		
@@ -109,13 +107,8 @@ public class Model extends Observable {
        
     	}
         
-    public boolean checkSymbol(String s, String v) {
-    	if(s != v ) {
-    		return false;
-    	}
-    	return true;
-
-
+    private boolean checkSymbol(String s, String v) {
+        return s.equals(v);
     }
 
     public Cell[][] getBoard() {

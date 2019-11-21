@@ -1,6 +1,7 @@
 package CasseTete;
 
 import CasseTete.Cell.Cell;
+import CasseTete.Cell.CellPath;
 import CasseTete.Cell.CellSymbol;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -19,7 +20,7 @@ public class View extends Application {
 
     private Model model;
 
-    public View(){
+    public View() {
 
     }
 
@@ -36,9 +37,12 @@ public class View extends Application {
 
         for (int i = 0; i < x; i++) {
             for (int j = 0; j < y; j++) {
-                String symbolText = ((CellSymbol) board[i][j]).getSymbol();
-                Image image = new Image("File:img/" + symbolText + ".png");
-                System.out.println(symbolText);
+                Cell cell = board[i][j];
+                Image image = new Image("File:img/" + "E" + ".png");
+                if (cell instanceof CellSymbol) {
+                    String symbolText = ((CellSymbol) cell).getSymbol();
+                    image = new Image("File:img/" + symbolText + ".png");
+                }
                 ImageView imageView = new ImageView(image);
                 setDDOnImageView(imageView, i, j);
                 gridPane.add(imageView, i, j);
@@ -59,15 +63,15 @@ public class View extends Application {
         model.addObserver(new Observer() {
             @Override
             public void update(Observable o, Object arg) {
-                System.out.println("model observer");
-                int x_cell = ((CellSymbol) arg).getX();
-                int y_cell = ((CellSymbol) arg).getY();
-                String symbol = ((CellSymbol) arg).getSymbol();
-                Image image = new Image("File:img/" + symbol + ".png");
-                ImageView imageView = new ImageView(image);
-                setDDOnImageView(imageView, x_cell, y_cell);
-                gridPane.add(imageView, x_cell, y_cell);
-
+                if (arg != null) {
+                    System.out.println("model observer");
+                    int x_cell = ((CellPath) arg).getX();
+                    int y_cell = ((CellPath) arg).getY();
+                    Image image = new Image("File:img/" + "P" + ".png");
+                    ImageView imageView = new ImageView(image);
+                    setDDOnImageView(imageView, x_cell, y_cell);
+                    gridPane.add(imageView, x_cell, y_cell);
+                }
             }
         });
     }
@@ -86,7 +90,7 @@ public class View extends Application {
                 ClipboardContent content = new ClipboardContent();
                 content.putString(""); // non utilisé actuellement
                 db.setContent(content);
-                model.startDD(x,y);
+                model.startDD(x, y);
                 System.out.println("Start DD Detected " + x + "-" + y);
                 event.consume();
             }
@@ -97,7 +101,7 @@ public class View extends Application {
         imageView.setOnDragEntered(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
-                model.parcoursDD(x,y);
+                model.parcoursDD(x, y);
                 System.out.println("Drag detected " + x + "-" + y);
                 event.consume();
             }
