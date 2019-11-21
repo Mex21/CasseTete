@@ -70,9 +70,9 @@ public class Model extends Observable {
     }
 
     public void stopDD(int x, int y) {
-        //System.out.println("stopDD : " + x + "-" + y + " -> " + lastX + "-" + lastY);
-        //setChanged();
-        //notifyObservers();
+        System.out.println("stopDD : " + x + "-" + y + " -> " + lastX + "-" + lastY);
+        setChanged();
+        notifyObservers();
     }
 
     public void parcoursDD(int x, int y) {
@@ -95,6 +95,14 @@ public class Model extends Observable {
                 board[x][y] = cellPath;
             }
         }
+    	else if(board[x][y] instanceof CellSymbol) {
+    		System.out.println(((CellSymbol) pathList.get(0)).getSymbol());
+    		System.out.println(((CellSymbol) board[x][y]).getSymbol());
+    		if(checkSymbol((((CellSymbol) pathList.get(0)).getSymbol()), (((CellSymbol) board[x][y]).getSymbol())) == false) {
+    	        System.out.println("WTF ERROR");
+    	       }
+    	    		
+    	}
     	System.out.println("parcoursDD2 : " + x + "-" + y);
             
         setChanged();
@@ -102,6 +110,12 @@ public class Model extends Observable {
         	
     	}
         
+    public boolean checkSymbol(String s, String v) {
+    	if(s != v ) {
+    		return false;
+    	}
+    	return true;
+    }
 
     public Cell[][] getBoard() {
         return board;
