@@ -2,51 +2,49 @@
 
 title __CELL's Class Diagram__\n
 
-  namespace  {
-    namespace asseTete {
-      namespace Cell {
-        abstract class CasseTete.Cell.Cell {
-            - symbol : String
-            - x : int
-            - y : int
-            + Cell()
-            + getSymbol()
-            + getX()
-            + getY()
-            + setSymbol()
-            + setX()
-            + setY()
-        }
+  namespace CasseTete {
+    namespace Cell {
+      abstract class CasseTete.Cell.Cell {
+          - x : int
+          - y : int
+          + Cell()
+          + getX()
+          + getY()
+          + setX()
+          + setY()
       }
     }
   }
   
 
-  namespace  {
-    namespace asseTete {
-      namespace Cell {
-        class CasseTete.Cell.CellPath {
-            - occupied : boolean
-            + CellPath()
-        }
+  namespace CasseTete {
+    namespace Cell {
+      class CasseTete.Cell.CellPath {
+          + CellPath()
+          + getPathEntry()
+          + getPathExit()
+          + setPathX()
+          + setPathY()
       }
     }
   }
   
 
-  namespace  {
-    namespace asseTete {
-      namespace Cell {
-        class CasseTete.Cell.CellSymbol {
-            - symbol : String
-            + CellSymbol()
-        }
+  namespace CasseTete {
+    namespace Cell {
+      class CasseTete.Cell.CellSymbol {
+          - symbol : String
+          + CellSymbol()
+          + getSymbol()
+          + setSymbol()
       }
     }
   }
   
 
   CasseTete.Cell.CellPath -up-|> CasseTete.Cell.Cell
+  CasseTete.Cell.CellPath o-- CasseTete.PathCoordinate : pathEntry
+  CasseTete.Cell.CellPath o-- CasseTete.PathCoordinate : pathExit
   CasseTete.Cell.CellSymbol -up-|> CasseTete.Cell.Cell
 
 

@@ -64,10 +64,11 @@ public class View extends Application {
             @Override
             public void update(Observable o, Object arg) {
                 if (arg != null) {
-                    System.out.println("model observer");
+                    //System.out.println("model observer");
                     int x_cell = ((CellPath) arg).getX();
                     int y_cell = ((CellPath) arg).getY();
-                    Image image = new Image("File:img/" + "P" + ".png");
+                    String text = CellPathToImg((CellPath)arg);
+                    Image image = new Image("File:img/" + text + ".png");
                     ImageView imageView = new ImageView(image);
                     setDDOnImageView(imageView, x_cell, y_cell);
                     gridPane.add(imageView, x_cell, y_cell);
@@ -116,6 +117,15 @@ public class View extends Application {
                 event.consume();
             }
         });
+    }
+
+    private String CellPathToImg (CellPath cell){
+        int EntryX = cell.getPathEntry().getX();
+        int EntryY = cell.getPathEntry().getY();
+        int ExitX = cell.getPathExit().getX();
+        int ExitY = cell.getPathExit().getY();
+        String s = EntryX+"_"+EntryY+"_"+ExitX+"_"+ExitY;
+        return s;
     }
 
 

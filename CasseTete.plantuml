@@ -2,69 +2,57 @@
 
 title __JAVA_PROJECT's Class Diagram__\n
 
-  namespace  {
-    namespace asseTete {
-      namespace Cell {
-        abstract class CasseTete.Cell.Cell {
-        }
+  namespace CasseTete {
+    namespace Cell {
+      abstract class CasseTete.Cell.Cell {
       }
     }
   }
   
 
-  namespace  {
-    namespace asseTete {
-      namespace Cell {
-        class CasseTete.Cell.CellPath {
-        }
+  namespace CasseTete {
+    namespace Cell {
+      class CasseTete.Cell.CellPath {
       }
     }
   }
   
 
-  namespace  {
-    namespace asseTete {
-      namespace Cell {
-        class CasseTete.Cell.CellSymbol {
-        }
+  namespace CasseTete {
+    namespace Cell {
+      class CasseTete.Cell.CellSymbol {
       }
     }
   }
   
 
-  namespace  {
-    namespace asseTete {
-      class CasseTete.Controller {
-      }
+  namespace CasseTete {
+    class CasseTete.Controller {
     }
   }
   
 
-  namespace  {
-    namespace asseTete {
-      class CasseTete.Model {
-      }
+  namespace CasseTete {
+    class CasseTete.Model {
     }
   }
   
 
-  namespace  {
-    namespace asseTete {
-      enum PathCoordinate {
-      }
+  namespace CasseTete {
+    class CasseTete.PathCoordinate {
     }
   }
   
 
-  namespace  {
-    namespace asseTete {
-      class CasseTete.View {
-      }
+  namespace CasseTete {
+    class CasseTete.View {
     }
   }
   
 
   CasseTete.Cell.CellPath -up-|> CasseTete.Cell.Cell
+  CasseTete.Cell.CellPath o-- CasseTete.PathCoordinate : pathEntry
+  CasseTete.Cell.CellPath o-- CasseTete.PathCoordinate : pathExit
   CasseTete.Cell.CellSymbol -up-|> CasseTete.Cell.Cell
   CasseTete.Model -up-|> java.util.Observable
   CasseTete.View -up-|> javafx.application.Application

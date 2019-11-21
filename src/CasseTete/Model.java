@@ -12,10 +12,8 @@ public class Model extends Observable {
     private int lastX, lastY;
     private String O = "S1";
     private String X = "S2";
-    private Cell[][] board;
-    private ArrayList<Cell> pathList;
-
-
+    private Cell[][] board, boardTemp;
+    private ArrayList<Cell> pathList, pathListTemp;
 
     public Model(int x, int y) {
         this.board = GenerateBoard(x, y);
@@ -23,11 +21,11 @@ public class Model extends Observable {
 
     private void CreateEmptyBoard(int x, int y) {
         board = new Cell[x][y];
-        PathCoordinate p = new PathCoordinate(0,0);
+        PathCoordinate p = new PathCoordinate(0, 0);
         pathList = new ArrayList<>();
         for (int i = 0; i < x; i++) {
             for (int j = 0; j < y; j++) {
-                board[i][j] = new CellPath(i, j, p,p);
+                board[i][j] = new CellPath(i, j, p, p);
             }
         }
     }
@@ -49,22 +47,29 @@ public class Model extends Observable {
     }
 
     public void startDD(int x, int y) {
-        System.out.println("startDD : " + x + "-" + y);
-        Cell[][] board = getBoard();
+        //System.out.println("startDD : " + x + "-" + y);
+        boardTemp = board.clone();
+        pathListTemp = new ArrayList<>();
         Cell cell = board[x][y];
         if (cell instanceof CellSymbol) {
-            pathList.add(cell);
+            pathListTemp.add(cell);
         }
     }
 
     public void stopDD(int x, int y) {
-        System.out.println("stopDD : " + x + "-" + y + " -> " + lastX + "-" + lastY);
-        setChanged();
-        notifyObservers();
+        //System.out.println("stopDD : " + x + "-" + y + " -> " + lastX + "-" + lastY);
+        int size = pathListTemp.size();
+        Cell cell = pathListTemp.get(size);
+        if (cell instanceof CellSymbol){
+            board = boardTemp.clone();
+            pathList.addAll(pathListTemp);
+        }else {
+            //fonction effacer !!!
+        }
     }
 
     private boolean isEmpty(Cell c) {
-        if(c instanceof CellPath) {
+        if (c instanceof CellPath) {
             //System.out.println("derp");
             return (((CellPath) c).getPathEntry().getX()) == 0 & ((CellPath) c).getPathEntry().getY() == 0 & ((CellPath) c).getPathExit().getX() == 0 & ((CellPath) c).getPathExit().getY() == 0;
         }
@@ -74,39 +79,44 @@ public class Model extends Observable {
 
     public void parcoursDD(int x, int y) {
 
-    	CellPath cellPath = null;
+        CellPath cellPath = null;
         System.out.println("parcoursDD1 : " + x + "-" + y);
-    	if(isEmpty(board[x][y])) {
+        if (isEmpty(boardTemp[x][y])) {
             lastX = x;
             lastY = y;
-            int listLength = pathList.size() - 1;
-            System.out.println(listLength);
-            Cell previousCell = pathList.get(listLength);
-            if (previousCell instanceof CellSymbol) {
-                int previousX = previousCell.getX();
-                int previousY = previousCell.getY();
-                int nextX = x - previousX;
-                int nextY = y - previousY;
-                PathCoordinate pathX = new PathCoordinate(0,1);
-                PathCoordinate pathY = new PathCoordinate(0,0);
-                cellPath = new CellPath(x, y, pathX, pathY);
-                board[x][y] = cellPath;
-                setChanged();
-                notifyObservers(cellPath);
+            int listLength = pathListTemp.size();
+            if (listLength == 0) {
+                System.out.println("Veuillez commencer par un chemin !!!");
+            } else if (listLength == 1) {
+                Cell previousCell = pathListTemp.get(listLength - 1);
+                if (previousCell instanceof CellSymbol) {
+                    int previousX = previousCell.getX();
+                    int previousY = previousCell.getY();
+                    int nextX = previousX - x;
+                    int nextY = y - previousY;
+                    System.out.println("Path :" + nextX + "/" + nextY);
+                    PathCoordinate pathX = new PathCoordinate(nextX, nextY);
+                    PathCoordinate pathY = new PathCoordinate(0, 0);
+                    cellPath = new CellPath(x, y, pathX, pathY);
+                    boardTemp[x][y] = cellPath;
+                    setChanged();
+                    notifyObservers(cellPath);
+                }
+            } else {
+                // Function to erase path !!!
             }
+        } else if (boardTemp[x][y] instanceof CellSymbol) {
+            System.out.println(((CellSymbol) pathListTemp.get(0)).getSymbol());
+            System.out.println(((CellSymbol) boardTemp[x][y]).getSymbol());
+            if (!checkSymbol((((CellSymbol) pathListTemp.get(0)).getSymbol()), (((CellSymbol) boardTemp[x][y]).getSymbol()))) {
+                System.out.println("WTF ERROR");
+            }
+
         }
-    	else if(board[x][y] instanceof CellSymbol) {
-    		System.out.println(((CellSymbol) pathList.get(0)).getSymbol());
-    		System.out.println(((CellSymbol) board[x][y]).getSymbol());
-    		if(!checkSymbol((((CellSymbol) pathList.get(0)).getSymbol()), (((CellSymbol) board[x][y]).getSymbol()))) {
-    	        System.out.println("WTF ERROR");
-    	       }
-    	    		
-    	}
-    	System.out.println("parcoursDD2 : " + x + "-" + y);
-       
-    	}
-        
+        System.out.println("parcoursDD2 : " + x + "-" + y);
+
+    }
+
     private boolean checkSymbol(String s, String v) {
         return s.equals(v);
     }
@@ -144,4 +154,4 @@ public class Model extends Observable {
                     }
                     break;
             }*/
-    }
+}
