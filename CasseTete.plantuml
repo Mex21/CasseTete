@@ -27,12 +27,6 @@ title __JAVA_PROJECT's Class Diagram__\n
   
 
   namespace CasseTete {
-    class CasseTete.Controller {
-    }
-  }
-  
-
-  namespace CasseTete {
     class CasseTete.Model {
     }
   }

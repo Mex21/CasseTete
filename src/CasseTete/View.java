@@ -26,8 +26,8 @@ public class View extends Application {
 
     @Override
     public void start(Stage stage) {
-        final int x = 5;
-        final int y = 5;
+        final int x = 10;
+        final int y = 10;
 
         model = new Model(x, y);
 
@@ -46,10 +46,9 @@ public class View extends Application {
                 ImageView imageView = new ImageView(image);
                 setDDOnImageView(imageView, i, j);
                 gridPane.add(imageView, i, j);
-                System.out.println(gridPane.toString());
+                //System.out.println(gridPane.toString());
             }
         }
-        gridPane.setGridLinesVisible(true);
         //System.out.println(gridPane.getChildren().toString());
 
         borderPane.setCenter(gridPane);
@@ -92,7 +91,7 @@ public class View extends Application {
                 content.putString(""); // non utilisé actuellement
                 db.setContent(content);
                 model.startDD(x, y);
-                System.out.println("Start DD Detected " + x + "-" + y);
+                //System.out.println("Start DD Detected " + x + "-" + y);
                 event.consume();
             }
         });
@@ -103,7 +102,7 @@ public class View extends Application {
             @Override
             public void handle(DragEvent event) {
                 model.parcoursDD(x, y);
-                System.out.println("Drag detected " + x + "-" + y);
+                //System.out.println("Drag detected " + x + "-" + y);
                 event.consume();
             }
         });
@@ -113,7 +112,8 @@ public class View extends Application {
         imageView.setOnDragDone(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
-                System.out.println("Stop DD Detected " + x + "-" + y);
+                //System.out.println("Stop DD Detected " + x + "-" + y);
+                model.stopDD(x,y);
                 event.consume();
             }
         });
