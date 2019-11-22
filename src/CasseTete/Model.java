@@ -49,18 +49,13 @@ public class Model extends Observable {
     }
 
     public void startDD(int x, int y) {
-        //System.out.println("startDD : " + x + "-" + y);
-        //boardTemp = board.clone();
         boardTemp = new Cell[BOARDSIZE][BOARDSIZE];
         for (int i = 0; i < BOARDSIZE; i++) {
             System.arraycopy(board[i], 0, boardTemp[i], 0, BOARDSIZE);
         }
-        //System.arraycopy(board,0,boardTemp,0,boardTemp.length);
-        //System.out.println("StartDD");
-        //System.out.println(getStringBoard(board));
         pathListTemp = new ArrayList<>();
         Cell cell = board[x][y];
-        if (cell instanceof CellSymbol) {
+        if (cell instanceof CellSymbol && !CellInsidePathList(cell)) {
             pathListTemp.add(cell);
         }
     }
@@ -100,85 +95,81 @@ public class Model extends Observable {
         //System.out.println(getStringBoard(board));
         //System.out.println(((CellPath)board[2][0]).getPathEntry().getX());
         //System.out.println(((CellPath)boardTemp[2][0]).getPathEntry().getX());
-        System.out.println(pathListTemp.size());
+        //System.out.println(pathListTemp.size());
         CellPath cellPath;
         Cell currentCell = boardTemp[x][y];
-        //System.out.println("parcoursDD1 : " + x + "-" + y);
+        System.out.println("parcoursDD1 : " + x + "-" + y);
         if (isEmpty(boardTemp[x][y])) {
             int listLength = pathListTemp.size();
-            //System.out.println(listLength);
-
+            System.out.println("Taille de la list : " + listLength);
             if (listLength == 0) {
                 System.out.println("Veuillez commencer par un chemin !!!");
-            }
-            else if (listLength == 1) {
+            } else if (listLength == 1) {
                 Cell previousCell = pathListTemp.get(listLength - 1);
-                if (AcceptedJump(previousCell,currentCell)){
+                if (AcceptedJump(previousCell, currentCell)) {
                     if (previousCell instanceof CellSymbol) {
-                        int previousX = previousCell.getX();
-                        int previousY = previousCell.getY();
-                        int jumpX = previousX - x;
-                        int jumpY = y - previousY;
-                        System.out.println("Path :" + jumpX + "/" + jumpY);
-                        PathCoordinate pathX = new PathCoordinate(jumpX, jumpY);
-                        PathCoordinate pathY = new PathCoordinate(0, 0);
-                        cellPath = new CellPath(x, y, pathX, pathY);
+                        cellPath = GeneratePath(x, y, previousCell);
                         boardTemp[x][y] = cellPath;
                         pathListTemp.add(cellPath);
                         setChanged();
                         notifyObservers(cellPath);
                     }
                 }
-            }
-            else {
+            } else {
                 Cell previousCell = pathListTemp.get(listLength - 1);
-                if (AcceptedJump(previousCell,currentCell)){
-                int previousX = previousCell.getX();
-                int previousY = previousCell.getY();
-                int jumpX = previousX - x;
-                int jumpY = y - previousY;
-                System.out.println("Path 2 :" + jumpX + "/" + jumpY);
-                PathCoordinate pathEntry = new PathCoordinate(jumpX, jumpY);
-                PathCoordinate pathExit = new PathCoordinate(0, 0);
-                cellPath = new CellPath(x, y, pathEntry, pathExit);
-                boardTemp[x][y] = cellPath;
-                pathListTemp.add(cellPath);
-                setChanged();
-                notifyObservers(cellPath);
-
-                int jumpPreviousX = x - previousX;
-                int jumpPreviousY = previousY - y;
-                ((CellPath) previousCell).getPathExit().setX(jumpPreviousX);
-                ((CellPath) previousCell).getPathExit().setY(jumpPreviousY);
-                setChanged();
-                notifyObservers(previousCell);
+                System.out.println(previousCell.toString());
+                System.out.println(currentCell.toString());
+                System.out.println();
+                if (AcceptedJump(previousCell, currentCell) && !CellSymbolInsidePathListTemp(previousCell)) {
+                    cellPath = GeneratePath(x, y, previousCell);
+                    boardTemp[x][y] = cellPath;
+                    pathListTemp.add(cellPath);
+                    setChanged();
+                    notifyObservers(cellPath);
+                    ModifyPreviousCell(x, y, (CellPath) previousCell);
+                    setChanged();
+                    notifyObservers(previousCell);
                 }
             }
-
-
-        } else if (currentCell instanceof CellSymbol) {
+        } else if (currentCell instanceof CellSymbol && !CellInsidePathList(currentCell)) {
             //System.out.println(((CellSymbol) pathListTemp.get(0)).getSymbol());
             //System.out.println(((CellSymbol) boardTemp[x][y]).getSymbol());
             if (pathListTemp.size() == 0) {
                 pathListTemp.add(currentCell);
             }
             if (pathListTemp.size() > 1) {
-                if (!checkSymbol((((CellSymbol) pathListTemp.get(0)).getSymbol()), (((CellSymbol) boardTemp[x][y]).getSymbol()))) {
+                if (!checkSymbol((CellSymbol) pathListTemp.get(0), (CellSymbol) boardTemp[x][y])) {
                     System.out.println("Veuillez finir par le même symbole !!!");
                 } else {
+                    System.out.println("Symbol ajouter pathlisttemp");
+                    int listLength = pathListTemp.size();
+                    Cell previousCell = pathListTemp.get(listLength - 1);
+                    ModifyPreviousCell(x, y, (CellPath) previousCell);
                     pathListTemp.add(currentCell);
+                    setChanged();
+                    notifyObservers(previousCell);
                 }
             }
 
         } else {
-            //Delete path
+           /* if (currentCell instanceof CellPath) {
+                if (CellPathInsidePathListTemp(currentCell)) {
+                    if ((((CellPath) currentCell).getPathExit().getX() != 0 && ((CellPath) currentCell).getPathExit().getY() != 0)) {
+                        pathListTemp.remove(pathListTemp.size());
+                        Cell cell = new CellPath(x, y, new PathCoordinate(0, 0), new PathCoordinate(0, 0));
+                        setChanged();
+                        notifyObservers(cell);
+                    }
+                }
+            }*/
         }
-        //System.out.println("parcoursDD2 : " + x + "-" + y);
-
     }
 
-    private boolean checkSymbol(String s, String v) {
-        return s.equals(v);
+    private boolean checkSymbol(CellSymbol c1, CellSymbol c2) {
+        //System.out.println(c1.getX() + "/" + c2.getX());
+        //System.out.println(c1.getY() + "/" + c2.getY());
+        //System.out.println(c1.getSymbol() + "/" + c2.getSymbol());
+        return ((c1.getX() != c2.getX() || c1.getY() != c2.getY()) && c1.getSymbol().equals(c2.getSymbol()));
     }
 
     public Cell[][] getBoard() {
@@ -208,6 +199,60 @@ public class Model extends Observable {
     private boolean AcceptedJump(Cell previousCell, Cell currentCell) {
         int jumpX = Math.abs(previousCell.getX() - currentCell.getX());
         int jumpY = Math.abs(previousCell.getY() - currentCell.getY());
-        return jumpX < 2 & jumpY < 2;
+        int jump = jumpX + jumpY;
+        return jump < 2;
+    }
+
+    private CellPath GeneratePath(int x, int y, Cell previousCell) {
+        CellPath cellPath;
+        int previousX = previousCell.getX();
+        int previousY = previousCell.getY();
+        int jumpX = previousX - x;
+        int jumpY = y - previousY;
+        //System.out.println("Path :" + jumpX + "/" + jumpY);
+        PathCoordinate pathX = new PathCoordinate(jumpX, jumpY);
+        PathCoordinate pathY = new PathCoordinate(0, 0);
+        cellPath = new CellPath(x, y, pathX, pathY);
+        return cellPath;
+    }
+
+
+    private void ModifyPreviousCell(int x, int y, CellPath previousCell) {
+        int jumpPreviousX = x - previousCell.getX();
+        int jumpPreviousY = previousCell.getY() - y;
+        (previousCell).getPathExit().setX(jumpPreviousX);
+        (previousCell).getPathExit().setY(jumpPreviousY);
+    }
+
+    // Return true if @cell is inside @pathList
+    private boolean CellInsidePathList(Cell cell) {
+        for (Cell value : pathList) {
+            if (cell.equals(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean CellSymbolInsidePathListTemp(Cell cell) {
+        if (cell instanceof CellSymbol) {
+            for (Cell value : pathListTemp) {
+                if (cell.equals(value)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean CellPathInsidePathListTemp(Cell cell) {
+        if (cell instanceof CellPath) {
+            for (Cell value : pathListTemp) {
+                if (cell.equals(value)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

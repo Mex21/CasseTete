@@ -24,5 +24,11 @@ public abstract class Cell {
         this.y = y;
     }
 
-
+    @Override
+    public String toString() {
+        return "Cell{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }

@@ -26,8 +26,8 @@ public class View extends Application {
 
     @Override
     public void start(Stage stage) {
-        final int x = 10;
-        final int y = 10;
+        final int x = 5;
+        final int y = 5;
 
         model = new Model(x, y);
 
