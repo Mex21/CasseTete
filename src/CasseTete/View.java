@@ -5,17 +5,24 @@ import CasseTete.Cell.CellPath;
 import CasseTete.Cell.CellSymbol;
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -36,7 +43,7 @@ public class View extends Application {
 
         Cell[][] board = model.getBoard();
         BorderPane borderPane = new BorderPane();
-        BorderPane borderPane1 =new BorderPane();
+        BorderPane borderPane1 = new BorderPane();
         GridPane gridPane = new GridPane();
 
         Button buttonUndo = new Button("Undo");
@@ -75,24 +82,25 @@ public class View extends Application {
         model.addObserver(new Observer() {
             @Override
             public void update(Observable o, Object arg) {
-                int x_cell = ((Cell)arg).getX();
-                int y_cell = ((Cell) arg).getY();
                 if (arg instanceof CellPath) {
+                    int x_cell = ((Cell) arg).getX();
+                    int y_cell = ((Cell) arg).getY();
                     //System.out.println("model observer");
-                    String text = CellPathToImg((CellPath)arg);
+                    String text = CellPathToImg((CellPath) arg);
+                    System.out.println(text);
                     Image image = new Image("File:img/" + text + ".png");
                     ImageView imageView = new ImageView(image);
                     setDDOnImageView(imageView, x_cell, y_cell);
                     gridPane.add(imageView, x_cell, y_cell);
-                }
-                else if (arg instanceof  CellSymbol){
-                    String symbole = ((CellSymbol)arg).getSymbol();
-                    Image image = new Image("File:img/" + symbole + ".png");
+                } else if (arg instanceof CellSymbol) {
+                    int x_cell = ((Cell) arg).getX();
+                    int y_cell = ((Cell) arg).getY();
+                    String symbol = ((CellSymbol) arg).getSymbol();
+                    Image image = new Image("File:img/" + symbol + ".png");
                     ImageView imageView = new ImageView(image);
-                    setDDOnImageView(imageView,x_cell,y_cell);
-                    gridPane.add(imageView,x_cell,y_cell);
-                }
-                else if ((Integer)arg == 1){
+                    setDDOnImageView(imageView, x_cell, y_cell);
+                    gridPane.add(imageView, x_cell, y_cell);
+                } else if ((Integer) arg == 1) {
                     victoryPopup();
                 }
             }
@@ -136,21 +144,21 @@ public class View extends Application {
             @Override
             public void handle(DragEvent event) {
                 //System.out.println("Stop DD Detected " + x + "-" + y);
-                model.stopDD(x,y);
+                model.stopDD();
                 event.consume();
             }
         });
     }
 
-    private String CellPathToImg (CellPath cell){
+    private String CellPathToImg(CellPath cell) {
         int EntryX = cell.getPathEntry().getX();
         int EntryY = cell.getPathEntry().getY();
         int ExitX = cell.getPathExit().getX();
         int ExitY = cell.getPathExit().getY();
-        return EntryX+"_"+EntryY+"_"+ExitX+"_"+ExitY;
+        return EntryX + "_" + EntryY + "_" + ExitX + "_" + ExitY;
     }
 
-    private void ControllerOnClickUndo (Button button){
+    private void ControllerOnClickUndo(Button button) {
         button.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -160,31 +168,36 @@ public class View extends Application {
         });
     }
 
-    private void ControllerOnClickNewGame (Button button){
+    private void ControllerOnClickNewGame(Button button) {
         button.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("Click New Game");
-                model.GenerateBoard(x,y);
+                model.GenerateBoard(x, y);
             }
         });
     }
 
-    private void victoryPopup(){
+    private void victoryPopup() {
         Stage popup = new Stage();
         popup.initModality(Modality.APPLICATION_MODAL);
         popup.setTitle("You Win !!!!!!!");
         Button button = new Button("OK !");
+        Text text = new Text("You won !!!!");
+        text.setFont(Font.font(30));
+
         button.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 popup.close();
+                model.GenerateBoard(x, y);
             }
         });
         VBox vBox = new VBox();
-        vBox.getChildren().addAll(button);
+        vBox.getChildren().addAll(text, button);
+        vBox.setAlignment(Pos.BOTTOM_CENTER);
 
-        Scene scene = new Scene(vBox,90,90);
+        Scene scene = new Scene(vBox);
         popup.setScene(scene);
         popup.show();
     }

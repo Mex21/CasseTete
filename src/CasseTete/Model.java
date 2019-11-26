@@ -77,7 +77,7 @@ public class Model extends Observable {
         }
     }
 
-    public void stopDD(int x, int y) {
+    public void stopDD() {
         int size = pathListTemp.size();
         if (size > 0) {
             Cell cell = pathListTemp.get(size - 1);
@@ -88,8 +88,7 @@ public class Model extends Observable {
                 pathList.addAll(pathListTemp);
                 hasWon();
             } else {
-                for (int i = 0; i < pathListTemp.size(); i++) {
-                    Cell c = pathListTemp.get(i);
+                for (Cell c : pathListTemp) {
                     deleteCellPath(c);
                 }
             }
@@ -160,7 +159,7 @@ public class Model extends Observable {
                     //System.out.println("Symbol ajouter pathlisttemp");
                     int listLength = pathListTemp.size();
                     previousCell = pathListTemp.get(listLength - 1);
-                    ModifyPreviousCell(x, y, (CellPath) previousCell);
+                    ModifyPreviousCell(x, y, (CellPath)previousCell);
                     pathListTemp.add(currentCell);
                     System.out.println(currentCell.toString());
                     setChanged();
@@ -168,17 +167,17 @@ public class Model extends Observable {
                 }
             }
 
-        } else {
-           /* if (currentCell instanceof CellPath) {
-                if (CellPathInsidePathListTemp(currentCell)) {
-                    if ((((CellPath) currentCell).getPathExit().getX() != 0 && ((CellPath) currentCell).getPathExit().getY() != 0)) {
-                        pathListTemp.remove(pathListTemp.size());
-                        Cell cell = new CellPath(x, y, new PathCoordinate(0, 0), new PathCoordinate(0, 0));
-                        setChanged();
-                        notifyObservers(cell);
-                    }
-                }
-            }*/
+        } else if (currentCell instanceof CellPath && currentCell == pathListTemp.get(listSize - 2) && !(previousCell instanceof CellSymbol)) {
+
+            CellPath lastCell = (CellPath) pathListTemp.get(listSize - 1);
+            ((CellPath) currentCell).setPathExit(new PathCoordinate(0, 0));
+            pathListTemp.set(listSize - 2, currentCell);
+
+            pathListTemp.remove(pathListTemp.size() - 1);
+            removeCellPath(lastCell);
+
+            setChanged();
+            notifyObservers(currentCell);
         }
     }
 
@@ -237,8 +236,8 @@ public class Model extends Observable {
     private void ModifyPreviousCell(int x, int y, CellPath previousCell) {
         int jumpPreviousX = x - previousCell.getX();
         int jumpPreviousY = previousCell.getY() - y;
-        (previousCell).getPathExit().setX(jumpPreviousX);
-        (previousCell).getPathExit().setY(jumpPreviousY);
+        previousCell.getPathExit().setX(jumpPreviousX);
+        previousCell.getPathExit().setY(jumpPreviousY);
     }
 
     // Return true if @cell is inside @pathList
@@ -262,17 +261,6 @@ public class Model extends Observable {
         return false;
     }
 
-    private boolean CellPathInsidePathListTemp(Cell cell) {
-        if (cell instanceof CellPath) {
-            for (Cell value : pathListTemp) {
-                if (cell.equals(value)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public void OnClickUndo() {
         int listSize = pathList.size();
         int compCellSymbol = 0;
@@ -280,13 +268,13 @@ public class Model extends Observable {
             Cell cell = pathList.get(i);
             if (cell instanceof CellSymbol && compCellSymbol < 2) {
                 compCellSymbol++;
-                pathList.remove(pathList.size()-1);
+                pathList.remove(pathList.size() - 1);
             } else if (cell instanceof CellPath) {
                 deleteCellPath(cell);
                 resetCellPath((CellPath) cell);
                 System.out.println(cell.toString());
                 board[cell.getX()][cell.getY()] = cell;
-                pathList.remove(pathList.size()-1);
+                pathList.remove(pathList.size() - 1);
             } else {
                 break;
             }
@@ -303,6 +291,15 @@ public class Model extends Observable {
         }
     }
 
+    private void removeCellPath(CellPath cellPath) {
+        int x = cellPath.getX();
+        int y = cellPath.getY();
+        resetCellPath(cellPath);
+        board[x][y] = cellPath;
+        setChanged();
+        notifyObservers(cellPath);
+    }
+
     private void resetCellPath(CellPath cell) {
         cell.getPathExit().setX(0);
         cell.getPathExit().setY(0);
@@ -311,7 +308,7 @@ public class Model extends Observable {
 
     }
 
-    private void hasWon(){
+    private void hasWon() {
         /*for(int i = 0 ; i<= BOARDSIZE_X; i++){
             for(int j = 0; j<=BOARDSIZE_Y; j++){
                 if(!isEmpty(board[i][j])){
@@ -322,15 +319,15 @@ public class Model extends Observable {
             }
         }*/
         int listSize = pathList.size();
-        int boardSize = BOARDSIZE_X*BOARDSIZE_Y;
+        int boardSize = BOARDSIZE_X * BOARDSIZE_Y;
         int compCellSymbol = 0;
         for (Cell cell : pathList) {
-            if (cell instanceof CellSymbol){
+            if (cell instanceof CellSymbol) {
                 compCellSymbol++;
             }
         }
-        System.out.println(listSize+"/"+boardSize+"/"+compCellSymbol+"/"+NBRSYMBOL);
-        if (listSize == boardSize && compCellSymbol == NBRSYMBOL){
+        System.out.println(listSize + "/" + boardSize + "/" + compCellSymbol + "/" + NBRSYMBOL);
+        if (listSize == boardSize && compCellSymbol == NBRSYMBOL) {
             System.out.println("Hello world");
             setChanged();
             notifyObservers(1);
