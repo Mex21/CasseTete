@@ -6,11 +6,14 @@ import CasseTete.Cell.CellSymbol;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.util.Observable;
@@ -19,6 +22,8 @@ import java.util.Observer;
 public class View extends Application {
 
     private Model model;
+    private final int x = 5;
+    private final int y = 5;
 
     public View() {
 
@@ -26,14 +31,20 @@ public class View extends Application {
 
     @Override
     public void start(Stage stage) {
-        final int x = 5;
-        final int y = 5;
 
         model = new Model(x, y);
 
         Cell[][] board = model.getBoard();
         BorderPane borderPane = new BorderPane();
+        BorderPane borderPane1 =new BorderPane();
         GridPane gridPane = new GridPane();
+
+        Button buttonUndo = new Button("Undo");
+        borderPane1.setLeft(buttonUndo);
+        ControllerOnClickUndo(buttonUndo);
+        Button buttonNewGame = new Button("New Game");
+        borderPane1.setRight(buttonNewGame);
+        ControllerOnClickNewGame(buttonNewGame);
 
         for (int i = 0; i < x; i++) {
             for (int j = 0; j < y; j++) {
@@ -52,6 +63,8 @@ public class View extends Application {
         //System.out.println(gridPane.getChildren().toString());
 
         borderPane.setCenter(gridPane);
+        borderPane.setTop(borderPane1);
+
 
         Scene scene = new Scene(borderPane);
 
@@ -62,15 +75,25 @@ public class View extends Application {
         model.addObserver(new Observer() {
             @Override
             public void update(Observable o, Object arg) {
-                if (arg != null) {
+                int x_cell = ((Cell)arg).getX();
+                int y_cell = ((Cell) arg).getY();
+                if (arg instanceof CellPath) {
                     //System.out.println("model observer");
-                    int x_cell = ((CellPath) arg).getX();
-                    int y_cell = ((CellPath) arg).getY();
                     String text = CellPathToImg((CellPath)arg);
                     Image image = new Image("File:img/" + text + ".png");
                     ImageView imageView = new ImageView(image);
                     setDDOnImageView(imageView, x_cell, y_cell);
                     gridPane.add(imageView, x_cell, y_cell);
+                }
+                else if (arg instanceof  CellSymbol){
+                    String symbole = ((CellSymbol)arg).getSymbol();
+                    Image image = new Image("File:img/" + symbole + ".png");
+                    ImageView imageView = new ImageView(image);
+                    setDDOnImageView(imageView,x_cell,y_cell);
+                    gridPane.add(imageView,x_cell,y_cell);
+                }
+                else if ((Integer)arg == 1){
+                    victoryPopup();
                 }
             }
         });
@@ -124,9 +147,45 @@ public class View extends Application {
         int EntryY = cell.getPathEntry().getY();
         int ExitX = cell.getPathExit().getX();
         int ExitY = cell.getPathExit().getY();
-        String s = EntryX+"_"+EntryY+"_"+ExitX+"_"+ExitY;
-        return s;
+        return EntryX+"_"+EntryY+"_"+ExitX+"_"+ExitY;
     }
 
+    private void ControllerOnClickUndo (Button button){
+        button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("Click undo");
+                model.OnClickUndo();
+            }
+        });
+    }
 
+    private void ControllerOnClickNewGame (Button button){
+        button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("Click New Game");
+                model.GenerateBoard(x,y);
+            }
+        });
+    }
+
+    private void victoryPopup(){
+        Stage popup = new Stage();
+        popup.initModality(Modality.APPLICATION_MODAL);
+        popup.setTitle("You Win !!!!!!!");
+        Button button = new Button("OK !");
+        button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                popup.close();
+            }
+        });
+        VBox vBox = new VBox();
+        vBox.getChildren().addAll(button);
+
+        Scene scene = new Scene(vBox,90,90);
+        popup.setScene(scene);
+        popup.show();
+    }
 }

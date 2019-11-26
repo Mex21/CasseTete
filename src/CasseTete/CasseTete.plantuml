@@ -4,22 +4,28 @@ title __CASSETETE's Class Diagram__\n
 
   namespace CasseTete {
     class CasseTete.Model {
+        {static} - BOARDSIZE : int
         - O : String
         - X : String
         - board : Cell[][]
         - boardTemp : Cell[][]
-        - lastX : int
-        - lastY : int
         - pathList : ArrayList<Cell>
         - pathListTemp : ArrayList<Cell>
         + Model()
         + getBoard()
+        + getStringBoard()
         + parcoursDD()
         + startDD()
         + stopDD()
+        - AcceptedJump()
+        - CellInsidePathList()
+        - CellPathInsidePathListTemp()
+        - CellSymbolInsidePathListTemp()
         - CreateEmptyBoard()
         - GenerateBoard()
+        - GeneratePath()
         - GenerateRandomSymbol()
+        - ModifyPreviousCell()
         - checkSymbol()
         - isEmpty()
     }

@@ -12,6 +12,7 @@ title __CELL's Class Diagram__\n
           + getY()
           + setX()
           + setY()
+          + toString()
       }
     }
   }

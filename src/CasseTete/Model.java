@@ -13,7 +13,9 @@ public class Model extends Observable {
     private Cell[][] board;
     private Cell[][] boardTemp;
     private ArrayList<Cell> pathList, pathListTemp;
-    private static int BOARDSIZE;
+    private static int BOARDSIZE_X;
+    private static int BOARDSIZE_Y;
+    private static int NBRSYMBOL = 4;
 
 
     public Model(int x, int y) {
@@ -21,63 +23,74 @@ public class Model extends Observable {
     }
 
     private void CreateEmptyBoard(int x, int y) {
-        BOARDSIZE = x;
+        BOARDSIZE_X = x;
+        BOARDSIZE_Y = y;
         board = new Cell[x][y];
         PathCoordinate p = new PathCoordinate(0, 0);
         pathList = new ArrayList<>();
         for (int i = 0; i < x; i++) {
             for (int j = 0; j < y; j++) {
-                board[i][j] = new CellPath(i, j, p, p);
+                CellPath cell = new CellPath(i, j, p, p);
+                board[i][j] = cell;
+                setChanged();
+                notifyObservers(cell);
             }
         }
     }
 
-    private Cell[][] GenerateBoard(int x, int y) {
+    public Cell[][] GenerateBoard(int x, int y) {
         CreateEmptyBoard(x, y);
         GenerateRandomSymbol();
-        //setChanged();
-        //notifyObservers();
         return getBoard();
     }
 
     private void GenerateRandomSymbol() {
         //Random Fonction to do
-        board[0][0] = new CellSymbol(0, 0, O);
-        board[0][2] = new CellSymbol(0, 2, O);
-        board[1][2] = new CellSymbol(1, 2, X);
-        board[1][1] = new CellSymbol(1, 1, X);
+        CellSymbol cell = new CellSymbol(0, 0, O);
+        board[0][0] = cell;
+        setChanged();
+        notifyObservers(cell);
+        cell = new CellSymbol(0, 2, O);
+        board[0][2] = cell;
+        setChanged();
+        notifyObservers(cell);
+        cell = new CellSymbol(1, 0, X);
+        board[1][0] = cell;
+        setChanged();
+        notifyObservers(cell);
+        cell = new CellSymbol(2, 2, X);
+        board[2][2] = cell;
+        setChanged();
+        notifyObservers(cell);
     }
 
     public void startDD(int x, int y) {
-        boardTemp = new Cell[BOARDSIZE][BOARDSIZE];
-        for (int i = 0; i < BOARDSIZE; i++) {
-            System.arraycopy(board[i], 0, boardTemp[i], 0, BOARDSIZE);
+        boardTemp = new Cell[BOARDSIZE_X][BOARDSIZE_Y];
+        for (int i = 0; i < BOARDSIZE_X; i++) {
+            System.arraycopy(board[i], 0, boardTemp[i], 0, BOARDSIZE_Y);
         }
         pathListTemp = new ArrayList<>();
         Cell cell = board[x][y];
         if (cell instanceof CellSymbol && !CellInsidePathList(cell)) {
             pathListTemp.add(cell);
+            System.out.println(cell.toString());
         }
     }
 
     public void stopDD(int x, int y) {
         int size = pathListTemp.size();
-        Cell cell = pathListTemp.get(size - 1);
-        if (cell instanceof CellSymbol) {
-            for (int i = 0; i < BOARDSIZE; i++) {
-                System.arraycopy(boardTemp[i], 0, board[i], 0, BOARDSIZE);
-            }
-            pathList.addAll(pathListTemp);
-        } else {
-            for (int i = 0; i < pathListTemp.size(); i++) {
-                Cell c = pathListTemp.get(i);
-                if (c instanceof CellPath) {
-                    ((CellPath) c).getPathExit().setX(0);
-                    ((CellPath) c).getPathExit().setY(0);
-                    ((CellPath) c).getPathEntry().setX(0);
-                    ((CellPath) c).getPathEntry().setY(0);
-                    setChanged();
-                    notifyObservers(c);
+        if (size > 0) {
+            Cell cell = pathListTemp.get(size - 1);
+            if (cell instanceof CellSymbol) {
+                for (int i = 0; i < BOARDSIZE_X; i++) {
+                    System.arraycopy(boardTemp[i], 0, board[i], 0, BOARDSIZE_Y);
+                }
+                pathList.addAll(pathListTemp);
+                hasWon();
+            } else {
+                for (int i = 0; i < pathListTemp.size(); i++) {
+                    Cell c = pathListTemp.get(i);
+                    deleteCellPath(c);
                 }
             }
         }
@@ -97,33 +110,35 @@ public class Model extends Observable {
         //System.out.println(((CellPath)boardTemp[2][0]).getPathEntry().getX());
         //System.out.println(pathListTemp.size());
         CellPath cellPath;
+        Cell previousCell;
         Cell currentCell = boardTemp[x][y];
-        System.out.println("parcoursDD1 : " + x + "-" + y);
+        int listSize = pathListTemp.size();
+        if (listSize > 0) {
+            previousCell = pathListTemp.get(listSize - 1);
+        } else {
+            previousCell = null;
+        }
+        //System.out.println("parcoursDD1 : " + x + "-" + y);
         if (isEmpty(boardTemp[x][y])) {
-            int listLength = pathListTemp.size();
-            System.out.println("Taille de la list : " + listLength);
-            if (listLength == 0) {
+            System.out.println("Taille de la list : " + listSize);
+            if (previousCell == null) {
                 System.out.println("Veuillez commencer par un chemin !!!");
-            } else if (listLength == 1) {
-                Cell previousCell = pathListTemp.get(listLength - 1);
-                if (AcceptedJump(previousCell, currentCell)) {
-                    if (previousCell instanceof CellSymbol) {
-                        cellPath = GeneratePath(x, y, previousCell);
-                        boardTemp[x][y] = cellPath;
-                        pathListTemp.add(cellPath);
-                        setChanged();
-                        notifyObservers(cellPath);
-                    }
+            } else if (previousCell instanceof CellSymbol) {
+                if (AcceptedJump(previousCell, currentCell) && listSize < 2) {
+                    cellPath = GeneratePath(x, y, previousCell);
+                    boardTemp[x][y] = cellPath;
+                    pathListTemp.add(cellPath);
+                    System.out.println(cellPath.toString());
+                    setChanged();
+                    notifyObservers(cellPath);
                 }
             } else {
-                Cell previousCell = pathListTemp.get(listLength - 1);
-                System.out.println(previousCell.toString());
-                System.out.println(currentCell.toString());
-                System.out.println();
+                // On peux enlever cellsymbolinsidepath et plutot verifier si la list fait plus de 3 !!!
                 if (AcceptedJump(previousCell, currentCell) && !CellSymbolInsidePathListTemp(previousCell)) {
                     cellPath = GeneratePath(x, y, previousCell);
                     boardTemp[x][y] = cellPath;
                     pathListTemp.add(cellPath);
+                    System.out.println(cellPath.toString());
                     setChanged();
                     notifyObservers(cellPath);
                     ModifyPreviousCell(x, y, (CellPath) previousCell);
@@ -131,21 +146,23 @@ public class Model extends Observable {
                     notifyObservers(previousCell);
                 }
             }
-        } else if (currentCell instanceof CellSymbol && !CellInsidePathList(currentCell)) {
+        } else if (currentCell instanceof CellSymbol && !CellInsidePathList(currentCell) && AcceptedJump(previousCell, currentCell)) {
             //System.out.println(((CellSymbol) pathListTemp.get(0)).getSymbol());
             //System.out.println(((CellSymbol) boardTemp[x][y]).getSymbol());
             if (pathListTemp.size() == 0) {
                 pathListTemp.add(currentCell);
+                System.out.println(currentCell.toString());
             }
             if (pathListTemp.size() > 1) {
                 if (!checkSymbol((CellSymbol) pathListTemp.get(0), (CellSymbol) boardTemp[x][y])) {
                     System.out.println("Veuillez finir par le même symbole !!!");
                 } else {
-                    System.out.println("Symbol ajouter pathlisttemp");
+                    //System.out.println("Symbol ajouter pathlisttemp");
                     int listLength = pathListTemp.size();
-                    Cell previousCell = pathListTemp.get(listLength - 1);
+                    previousCell = pathListTemp.get(listLength - 1);
                     ModifyPreviousCell(x, y, (CellPath) previousCell);
                     pathListTemp.add(currentCell);
+                    System.out.println(currentCell.toString());
                     setChanged();
                     notifyObservers(previousCell);
                 }
@@ -178,8 +195,8 @@ public class Model extends Observable {
 
     public String getStringBoard(Cell[][] board) {
         StringBuilder s = new StringBuilder("{");
-        for (int i = 0; i < BOARDSIZE; i++) {
-            for (int j = 0; j < BOARDSIZE; j++) {
+        for (int i = 0; i < BOARDSIZE_X; i++) {
+            for (int j = 0; j < BOARDSIZE_Y; j++) {
                 Cell cell = board[i][j];
                 if (cell instanceof CellSymbol) {
                     s.append(((CellSymbol) cell).getSymbol());
@@ -254,5 +271,69 @@ public class Model extends Observable {
             }
         }
         return false;
+    }
+
+    public void OnClickUndo() {
+        int listSize = pathList.size();
+        int compCellSymbol = 0;
+        for (int i = listSize - 1; i >= 0; i--) {
+            Cell cell = pathList.get(i);
+            if (cell instanceof CellSymbol && compCellSymbol < 2) {
+                compCellSymbol++;
+                pathList.remove(pathList.size()-1);
+            } else if (cell instanceof CellPath) {
+                deleteCellPath(cell);
+                resetCellPath((CellPath) cell);
+                System.out.println(cell.toString());
+                board[cell.getX()][cell.getY()] = cell;
+                pathList.remove(pathList.size()-1);
+            } else {
+                break;
+            }
+        }
+        System.out.println(pathList.size());
+
+    }
+
+    private void deleteCellPath(Cell c) {
+        if (c instanceof CellPath) {
+            resetCellPath((CellPath) c);
+            setChanged();
+            notifyObservers(c);
+        }
+    }
+
+    private void resetCellPath(CellPath cell) {
+        cell.getPathExit().setX(0);
+        cell.getPathExit().setY(0);
+        cell.getPathEntry().setX(0);
+        cell.getPathEntry().setY(0);
+
+    }
+
+    private void hasWon(){
+        /*for(int i = 0 ; i<= BOARDSIZE_X; i++){
+            for(int j = 0; j<=BOARDSIZE_Y; j++){
+                if(!isEmpty(board[i][j])){
+                    if((((CellSymbol) pathList.get(0)).getSymbol().equals(((CellSymbol) board[i][j]).getSymbol()))  && (((CellSymbol)board[i][j]).getSymbol()).equals(((CellSymbol) pathList.lastIndexOf((CellSymbol))))) {
+                        System.out.println("Hello world");
+                    }
+                }
+            }
+        }*/
+        int listSize = pathList.size();
+        int boardSize = BOARDSIZE_X*BOARDSIZE_Y;
+        int compCellSymbol = 0;
+        for (Cell cell : pathList) {
+            if (cell instanceof CellSymbol){
+                compCellSymbol++;
+            }
+        }
+        System.out.println(listSize+"/"+boardSize+"/"+compCellSymbol+"/"+NBRSYMBOL);
+        if (listSize == boardSize && compCellSymbol == NBRSYMBOL){
+            System.out.println("Hello world");
+            setChanged();
+            notifyObservers(1);
+        }
     }
 }
