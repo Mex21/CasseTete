@@ -24,8 +24,8 @@ title __CELL's Class Diagram__\n
           + CellPath()
           + getPathEntry()
           + getPathExit()
-          + setPathX()
-          + setPathY()
+          + setPathEntry()
+          + setPathExit()
       }
     }
   }

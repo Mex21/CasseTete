@@ -15,6 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -29,8 +30,10 @@ import java.util.Observer;
 public class View extends Application {
 
     private Model model;
-    private final int x = 5;
-    private final int y = 5;
+    private int x = 4;
+    private int y = 4;
+    private GridPane gridPane;
+    Cell[][] board;
 
     public View() {
 
@@ -39,12 +42,13 @@ public class View extends Application {
     @Override
     public void start(Stage stage) {
 
+
         model = new Model(x, y);
 
-        Cell[][] board = model.getBoard();
+        board = model.getBoard();
         BorderPane borderPane = new BorderPane();
         BorderPane borderPane1 = new BorderPane();
-        GridPane gridPane = new GridPane();
+        gridPane = new GridPane();
 
         Button buttonUndo = new Button("Undo");
         borderPane1.setLeft(buttonUndo);
@@ -52,23 +56,14 @@ public class View extends Application {
         Button buttonNewGame = new Button("New Game");
         borderPane1.setRight(buttonNewGame);
         ControllerOnClickNewGame(buttonNewGame);
+        Button buttonBoardSize = new Button("Board Size");
+        borderPane1.setCenter(buttonBoardSize);
+        ControllerOnClickBoardSize(buttonBoardSize);
 
-        for (int i = 0; i < x; i++) {
-            for (int j = 0; j < y; j++) {
-                Cell cell = board[i][j];
-                Image image = new Image("File:img/" + "E" + ".png");
-                if (cell instanceof CellSymbol) {
-                    String symbolText = ((CellSymbol) cell).getSymbol();
-                    image = new Image("File:img/" + symbolText + ".png");
-                }
-                ImageView imageView = new ImageView(image);
-                setDDOnImageView(imageView, i, j);
-                gridPane.add(imageView, i, j);
-                //System.out.println(gridPane.toString());
-            }
-        }
+        GenerateGridPane();
+
         //System.out.println(gridPane.getChildren().toString());
-
+        gridPane.setAlignment(Pos.CENTER);
         borderPane.setCenter(gridPane);
         borderPane.setTop(borderPane1);
 
@@ -89,17 +84,17 @@ public class View extends Application {
                     String text = CellPathToImg((CellPath) arg);
                     System.out.println(text);
                     Image image = new Image("File:img/" + text + ".png");
-                    ImageView imageView = new ImageView(image);
+                    ImageView imageView = (ImageView)gridPane.getChildren().get(y * x_cell + y_cell);
+                    imageView.setImage(image);
                     setDDOnImageView(imageView, x_cell, y_cell);
-                    gridPane.add(imageView, x_cell, y_cell);
                 } else if (arg instanceof CellSymbol) {
                     int x_cell = ((Cell) arg).getX();
                     int y_cell = ((Cell) arg).getY();
                     String symbol = ((CellSymbol) arg).getSymbol();
                     Image image = new Image("File:img/" + symbol + ".png");
-                    ImageView imageView = new ImageView(image);
+                    ImageView imageView = (ImageView)gridPane.getChildren().get(y * x_cell + y_cell);
+                    imageView.setImage(image);
                     setDDOnImageView(imageView, x_cell, y_cell);
-                    gridPane.add(imageView, x_cell, y_cell);
                 } else if ((Integer) arg == 1) {
                     victoryPopup();
                 }
@@ -200,5 +195,77 @@ public class View extends Application {
         Scene scene = new Scene(vBox);
         popup.setScene(scene);
         popup.show();
+    }
+
+    private void ControllerOnClickBoardSize(Button button){
+        button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                Stage popup = new Stage();
+                popup.initModality(Modality.APPLICATION_MODAL);
+                popup.setTitle("Choose your Size");
+
+                final TextField textField = new TextField();
+                Text text = new Text("Set x size !");
+                text.setFont(Font.font(20));
+                HBox hBox = new HBox();
+                hBox.getChildren().addAll(text, textField);
+                hBox.setAlignment(Pos.BOTTOM_CENTER);
+
+                final TextField textField2 = new TextField();
+                text = new Text("Set y size !");
+                text.setFont(Font.font(20));
+                HBox hBox2 = new HBox();
+                hBox2.getChildren().addAll(text, textField2);
+                hBox2.setAlignment(Pos.BOTTOM_CENTER);
+
+                Button buttonOk = new Button("OK");
+                buttonOk.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        int x_temp  = Integer.parseInt((textField.getCharacters()).toString());
+                        int y_temp = Integer.parseInt((textField2.getCharacters()).toString());
+                        if (x_temp > 2 && y_temp > 2){
+                            gridPane.getChildren().remove(0,x*y);
+                            x = x_temp;
+                            y = y_temp;
+                            for(int i = 0; i< x;i++){
+                                for(int j = 0; j< y;j++){
+                                    gridPane.add(new ImageView(new Image("File:img/" + "0_0_0_0" + ".png")),i,j);
+                                }
+                            }
+                            System.out.println("coucou");
+                            model.GenerateBoard(x,y);
+                            popup.close();
+                        }
+                    }
+                });
+
+                VBox vBox = new VBox();
+                vBox.getChildren().addAll(hBox,hBox2,buttonOk);
+                vBox.setAlignment(Pos.CENTER);
+
+                Scene scene = new Scene(vBox);
+                popup.setScene(scene);
+                popup.show();
+            }
+        });
+    }
+
+    private void GenerateGridPane(){
+        for (int i = 0; i < x; i++) {
+            for (int j = 0; j < y; j++) {
+                Cell cell = board[i][j];
+                Image image = new Image("File:img/" + "0_0_0_0" + ".png");
+                if (cell instanceof CellSymbol) {
+                    String symbolText = ((CellSymbol) cell).getSymbol();
+                    image = new Image("File:img/" + symbolText + ".png");
+                }
+                ImageView imageView = new ImageView(image);
+                setDDOnImageView(imageView, i, j);
+                gridPane.add(imageView, i, j);
+                //System.out.println(gridPane.toString());
+            }
+        }
     }
 }

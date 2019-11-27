@@ -6,23 +6,23 @@ import CasseTete.Cell.CellSymbol;
 
 import java.util.ArrayList;
 import java.util.Observable;
+import java.util.Random;
 
 public class Model extends Observable {
-    private String O = "S1";
-    private String X = "S2";
     private Cell[][] board;
     private Cell[][] boardTemp;
     private ArrayList<Cell> pathList, pathListTemp;
     private static int BOARDSIZE_X;
     private static int BOARDSIZE_Y;
     private static int NBRSYMBOL = 4;
+    private static int NBRPAIRSYMBOL = NBRSYMBOL / 2;
 
 
     public Model(int x, int y) {
         this.board = GenerateBoard(x, y);
     }
 
-    private void CreateEmptyBoard(int x, int y) {
+    public void CreateEmptyBoard(int x, int y) {
         BOARDSIZE_X = x;
         BOARDSIZE_Y = y;
         board = new Cell[x][y];
@@ -45,8 +45,54 @@ public class Model extends Observable {
     }
 
     private void GenerateRandomSymbol() {
+        if (BOARDSIZE_X == 3 && BOARDSIZE_Y == 3) {
+            CellSymbol cellSymbol1 = new CellSymbol(0,0,"S1");
+            board[0][0] = cellSymbol1;
+            setChanged();
+            notifyObservers(cellSymbol1);
+            CellSymbol cellSymbol2 = new CellSymbol(2,0,"S2");
+            board[2][0] = cellSymbol2;
+            setChanged();
+            notifyObservers(cellSymbol2);
+            CellSymbol cellSymbol3 = new CellSymbol(2,2,"S2");
+            board[2][2] = cellSymbol3;
+            setChanged();
+            notifyObservers(cellSymbol3);
+            CellSymbol cellSymbol4 = new CellSymbol(1,2,"S1");
+            board[1][2] = cellSymbol4;
+            setChanged();
+            notifyObservers(cellSymbol4);
+
+        } else {
+            boolean symbolAdded;
+            for (int j = 1; j <= NBRPAIRSYMBOL; j++) {
+                for (int i = 0; i < 2; i++) {
+                    symbolAdded = false;
+                    int random_x = 0, random_y = 0;
+                    CellSymbol cell = null;
+                    do {
+                        Random r = new Random();
+                        random_x = r.nextInt(BOARDSIZE_X);
+                        r = new Random();
+                        random_y = r.nextInt(BOARDSIZE_Y);
+                        //System.out.println(random_x + "/" + random_y);
+                        cell = new CellSymbol(random_x, random_y, "S" + j);
+                        System.out.println(acceptedNeighboor(cell));
+                        if (isEmpty(board[random_x][random_y]) && forbidDiagonal(cell) && acceptedNeighboor(cell)) {
+                            symbolAdded = true;
+                        }
+                        //System.out.println(symbolAdded);
+                    } while (!symbolAdded);
+                    board[random_x][random_y] = cell;
+                    setChanged();
+                    notifyObservers(cell);
+
+                }
+            }
+        }
+
         //Random Fonction to do
-        CellSymbol cell = new CellSymbol(0, 0, O);
+        /*CellSymbol cell = new CellSymbol(0, 0, O);
         board[0][0] = cell;
         setChanged();
         notifyObservers(cell);
@@ -61,7 +107,7 @@ public class Model extends Observable {
         cell = new CellSymbol(2, 2, X);
         board[2][2] = cell;
         setChanged();
-        notifyObservers(cell);
+        notifyObservers(cell);*/
     }
 
     public void startDD(int x, int y) {
@@ -159,7 +205,7 @@ public class Model extends Observable {
                     //System.out.println("Symbol ajouter pathlisttemp");
                     int listLength = pathListTemp.size();
                     previousCell = pathListTemp.get(listLength - 1);
-                    ModifyPreviousCell(x, y, (CellPath)previousCell);
+                    ModifyPreviousCell(x, y, (CellPath) previousCell);
                     pathListTemp.add(currentCell);
                     System.out.println(currentCell.toString());
                     setChanged();
@@ -190,26 +236,6 @@ public class Model extends Observable {
 
     public Cell[][] getBoard() {
         return board;
-    }
-
-    public String getStringBoard(Cell[][] board) {
-        StringBuilder s = new StringBuilder("{");
-        for (int i = 0; i < BOARDSIZE_X; i++) {
-            for (int j = 0; j < BOARDSIZE_Y; j++) {
-                Cell cell = board[i][j];
-                if (cell instanceof CellSymbol) {
-                    s.append(((CellSymbol) cell).getSymbol());
-                    s.append(" , ");
-                } else {
-                    if (((CellPath) cell).getPathEntry().getY() == 0 & ((CellPath) cell).getPathEntry().getX() == 0 & ((CellPath) cell).getPathExit().getY() == 0 & ((CellPath) cell).getPathExit().getX() == 0) {
-                        s.append("Empty , ");
-                    } else {
-                        s.append("path , ");
-                    }
-                }
-            }
-        }
-        return s.toString();
     }
 
     private boolean AcceptedJump(Cell previousCell, Cell currentCell) {
@@ -332,5 +358,58 @@ public class Model extends Observable {
             setChanged();
             notifyObservers(1);
         }
+    }
+
+    private boolean forbidDiagonal(Cell c) {
+        int xCell = c.getX();
+        int yCell = c.getY();
+        System.out.println(xCell + "/" + yCell);
+        if (xCell + 1 < BOARDSIZE_X && yCell + 1 < BOARDSIZE_Y) {
+            if (!isEmpty(board[xCell + 1][yCell + 1])) {
+                return false;
+            }
+        }
+        if (xCell - 1 >= 0 && yCell - 1 >= 0) {
+            if (!isEmpty(board[xCell - 1][yCell - 1])) {
+                return false;
+            }
+        }
+        if (xCell + 1 < BOARDSIZE_X && yCell - 1 >= 0) {
+            if (!isEmpty(board[xCell + 1][yCell - 1])) {
+                return false;
+            }
+        }
+        if (xCell - 1 >= 0 && yCell + 1 < BOARDSIZE_Y) {
+            if (!isEmpty(board[xCell - 1][yCell + 1])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean acceptedNeighboor(CellSymbol cellSymbol) {
+        int[] listMove = {-1, 0, 1};
+        int compSymbol = 0;
+        int xCell = cellSymbol.getX();
+        int yCell = cellSymbol.getY();
+        for (int i : listMove) {
+            for (int j : listMove) {
+                Cell cell = getCellInBoard(xCell + i, yCell + j);
+                if (cell instanceof CellSymbol) {
+                    compSymbol++;
+                }
+            }
+        }
+        return compSymbol <= 0;
+    }
+
+    private Cell getCellInBoard(int x, int y) {
+        Cell cell;
+        try {
+            cell = board[x][y];
+        } catch (Exception e) {
+            cell = null;
+        }
+        return cell;
     }
 }

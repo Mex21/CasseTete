@@ -4,30 +4,34 @@ title __CASSETETE's Class Diagram__\n
 
   namespace CasseTete {
     class CasseTete.Model {
-        {static} - BOARDSIZE : int
-        - O : String
-        - X : String
+        {static} - BOARDSIZE_X : int
+        {static} - BOARDSIZE_Y : int
+        {static} - NBRPAIRSYMBOL : int
+        {static} - NBRSYMBOL : int
         - board : Cell[][]
         - boardTemp : Cell[][]
         - pathList : ArrayList<Cell>
         - pathListTemp : ArrayList<Cell>
+        + GenerateBoard()
         + Model()
+        + OnClickUndo()
         + getBoard()
-        + getStringBoard()
         + parcoursDD()
         + startDD()
         + stopDD()
         - AcceptedJump()
         - CellInsidePathList()
-        - CellPathInsidePathListTemp()
         - CellSymbolInsidePathListTemp()
         - CreateEmptyBoard()
-        - GenerateBoard()
         - GeneratePath()
         - GenerateRandomSymbol()
         - ModifyPreviousCell()
         - checkSymbol()
+        - deleteCellPath()
+        - hasWon()
         - isEmpty()
+        - removeCellPath()
+        - resetCellPath()
     }
   }
   
@@ -47,13 +51,18 @@ title __CASSETETE's Class Diagram__\n
 
   namespace CasseTete {
     class CasseTete.View {
+        - x : int
+        - y : int
         + View()
         + start()
         - CellPathToImg()
+        - ControllerOnClickNewGame()
+        - ControllerOnClickUndo()
         - ControllerOnDragDetected()
         - ControllerOnDragDone()
         - ControllerOnDragEntered()
         - setDDOnImageView()
+        - victoryPopup()
     }
   }
   
