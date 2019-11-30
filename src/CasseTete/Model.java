@@ -21,7 +21,18 @@ public class Model extends Observable {
     public Model(int x, int y) {
         this.board = GenerateBoard(x, y);
     }
+    /** @brief
+     * Notre modèle de jeu utilise des tableaux temporaire, ou tampons, afin de stocker peu à peu l'avancement du Drag & Drop.
+     * On stocke l'avancement du plateau de jeu dans une liste, pathListTemp, avant d'y stocker dans pathList une fois le chemin fini.
+     *
+     */
 
+
+    /**
+     * Fonction permettant la crétation d'un plateau de jeu vide
+     * @param x : Taille du plateau en abscisse
+     * @param y : Taille du plateau en ordonnée
+     */
     public void CreateEmptyBoard(int x, int y) {
         BOARDSIZE_X = x;
         BOARDSIZE_Y = y;
@@ -38,12 +49,22 @@ public class Model extends Observable {
         }
     }
 
+    /**
+     * Fonction pemettant de générer un plateau de taille x * y
+     * @param x : Taille du plateau en abscisse
+     * @param y : Taille du plateau en ordonnée
+     * @return Renvoie un tableau de cellules correspondant au tableau de jeu
+     */
     public Cell[][] GenerateBoard(int x, int y) {
         CreateEmptyBoard(x, y);
         GenerateRandomSymbol();
         return getBoard();
     }
 
+    /**
+     * Fonction permettant de générer une position aléatoire pour tous les  symboles
+     * Utilise les fonctions de vérification pour éviter certaines positions problèmatique
+     */
     private void GenerateRandomSymbol() {
         if (BOARDSIZE_X == 3 && BOARDSIZE_Y == 3) {
             CellSymbol cellSymbol1 = new CellSymbol(0,0,"S1");
@@ -110,6 +131,11 @@ public class Model extends Observable {
         notifyObservers(cell);*/
     }
 
+    /**
+     * Fonction permettant de stocker la première case cliquée dans la liste temporaire
+     * @param x : La position en abscisse de la case courante
+     * @param y :La position en ordonnée de la case courante
+     */
     public void startDD(int x, int y) {
         boardTemp = new Cell[BOARDSIZE_X][BOARDSIZE_Y];
         for (int i = 0; i < BOARDSIZE_X; i++) {
@@ -123,6 +149,9 @@ public class Model extends Observable {
         }
     }
 
+    /**
+     * Fonction permettant la mise à jour des tableaux lors de la fin du Drag and Drop
+     */
     public void stopDD() {
         int size = pathListTemp.size();
         if (size > 0) {
@@ -141,6 +170,11 @@ public class Model extends Observable {
         }
     }
 
+    /**
+     * Permet de vérfier si la case passée en paramètre est vide ou non
+     * @param c : La cellule à tester
+     * @return Retourne vrai si elle est vide, faux sinon
+     */
     private boolean isEmpty(Cell c) {
         if (c instanceof CellPath) {
             return (((CellPath) c).getPathEntry().getX()) == 0 & ((CellPath) c).getPathEntry().getY() == 0 & ((CellPath) c).getPathExit().getX() == 0 & ((CellPath) c).getPathExit().getY() == 0;
@@ -148,6 +182,12 @@ public class Model extends Observable {
         return false;
     }
 
+    /**
+     * Fonction nous permettant de regarder la cellule sur laquelle la souris est (pendant un Drag) ainsi que déterminer le chemin en utilisant la case précédente
+     * On effectue différents tests pour être sûr que la case courante est bien vide, que ce n'est pas un symbole ou déjà un chemin
+     * @param x : La position en abscisse de la case courante
+     * @param y : La position en ordonnée de la case courante
+     */
     public void parcoursDD(int x, int y) {
         //System.out.println(getStringBoard(boardTemp));
         //System.out.println(getStringBoard(board));
@@ -227,6 +267,12 @@ public class Model extends Observable {
         }
     }
 
+    /**
+     * Fonction permettant la vérification entre deux symboles donnés
+     * @param c1 : Le premier symbole à tester
+     * @param c2 : Le second symbole à tester
+     * @return Vrai si les deux symboles sont les mêmes, faux sinon
+     */
     private boolean checkSymbol(CellSymbol c1, CellSymbol c2) {
         //System.out.println(c1.getX() + "/" + c2.getX());
         //System.out.println(c1.getY() + "/" + c2.getY());
@@ -234,10 +280,18 @@ public class Model extends Observable {
         return ((c1.getX() != c2.getX() || c1.getY() != c2.getY()) && c1.getSymbol().equals(c2.getSymbol()));
     }
 
+
     public Cell[][] getBoard() {
         return board;
     }
 
+    /**
+     * On vérifie si la direction choisie avec la souris est valide
+     * On empêche aussi les sauts de cases : Si le saut saute + d'une case, on retourne Faux, donc la diagonale ou la sortie de fenêtre ne marche pas.
+     * @param previousCell : La case d'où vient le click
+     * @param currentCell : La case où se trouve le click actuellement
+     * @return Vrai si le saut est de 1 et qu'il s'agit d'une case vide, faux sinon
+     */
     private boolean AcceptedJump(Cell previousCell, Cell currentCell) {
         int jumpX = Math.abs(previousCell.getX() - currentCell.getX());
         int jumpY = Math.abs(previousCell.getY() - currentCell.getY());
@@ -245,6 +299,13 @@ public class Model extends Observable {
         return jump < 2;
     }
 
+    /**
+     * Permet la génération du chemin en se basant sur les coordonnées de la case précedente
+     * @param x : La position en abscisse de la case courante
+     * @param y : La position en ordonnée de la case courante
+     * @param previousCell : La case précédente
+     * @return Le nouveau chemin créée
+     */
     private CellPath GeneratePath(int x, int y, Cell previousCell) {
         CellPath cellPath;
         int previousX = previousCell.getX();
@@ -258,7 +319,13 @@ public class Model extends Observable {
         return cellPath;
     }
 
-
+    /**
+     * On modifie l'aspect de la case précédente.
+     * Exemple : On passe d'un chemin droit à un chemin courbé car on a tourné par rapport à l'endroit où on était avant
+     * @param x : La position en abscisse de la case courante
+     * @param y : La position en ordonnée de la case courante
+     * @param previousCell : La case précédente
+     */
     private void ModifyPreviousCell(int x, int y, CellPath previousCell) {
         int jumpPreviousX = x - previousCell.getX();
         int jumpPreviousY = previousCell.getY() - y;
@@ -266,7 +333,11 @@ public class Model extends Observable {
         previousCell.getPathExit().setY(jumpPreviousY);
     }
 
-    // Return true if @cell is inside @pathList
+    /**
+     * Fonction permettant de vérifier la présence d'une cellule dans la liste
+     * @param cell : La cellule à tester
+     * @return Vrai si la cellule est dans la liste, faux sinon
+     */
     private boolean CellInsidePathList(Cell cell) {
         for (Cell value : pathList) {
             if (cell.equals(value)) {
@@ -276,6 +347,12 @@ public class Model extends Observable {
         return false;
     }
 
+    /**
+     * Fonction permettant de vérifier si la cellule en paramètre est dans la liste temporaire.
+     * On vérifie aussi qu'il s'agit d'un CellSymbol avant d'effectuer le test.
+     * @param cell : La cellule à tester
+     * @return Vrai si la cellule est dans la liste temporaire, faux sinon
+     */
     private boolean CellSymbolInsidePathListTemp(Cell cell) {
         if (cell instanceof CellSymbol) {
             for (Cell value : pathListTemp) {
@@ -287,6 +364,9 @@ public class Model extends Observable {
         return false;
     }
 
+    /**
+     * Efface la dernière liste crééee en appuyant sur undo
+     */
     public void OnClickUndo() {
         int listSize = pathList.size();
         int compCellSymbol = 0;
@@ -309,6 +389,10 @@ public class Model extends Observable {
 
     }
 
+    /**
+     * Fonction permettant de supprimer la case passée en paramètre
+     * @param c : La case à supprimer
+     */
     private void deleteCellPath(Cell c) {
         if (c instanceof CellPath) {
             resetCellPath((CellPath) c);
@@ -317,6 +401,10 @@ public class Model extends Observable {
         }
     }
 
+    /**
+     * Fonction permettant de supprimer un chemin entier (et le remet à 0 par un appel à resetCellPath)
+     * @param cellPath : Le chemin à supprimer
+     */
     private void removeCellPath(CellPath cellPath) {
         int x = cellPath.getX();
         int y = cellPath.getY();
@@ -326,6 +414,10 @@ public class Model extends Observable {
         notifyObservers(cellPath);
     }
 
+    /**
+     * Fonction permettant de remettre toutes les cases d'un chemin à 0 (case vide)
+     * @param cell : Le chemin à reset
+     */
     private void resetCellPath(CellPath cell) {
         cell.getPathExit().setX(0);
         cell.getPathExit().setY(0);
@@ -334,6 +426,12 @@ public class Model extends Observable {
 
     }
 
+    /**
+     * Fonction de victoire  : Vérifie si l'utilisateur a gagné ou non
+     * On vérifie si le nombre de symboles (nombre définit en global) est égal au nombre de symboles  dans la liste.
+     * On vérifie aussi que la taille de la liste est égale à la taile totale du plateau (x * y).
+     * Si c'est le case, l'utilisateur a gagné.
+     */
     private void hasWon() {
         /*for(int i = 0 ; i<= BOARDSIZE_X; i++){
             for(int j = 0; j<=BOARDSIZE_Y; j++){
@@ -354,12 +452,17 @@ public class Model extends Observable {
         }
         System.out.println(listSize + "/" + boardSize + "/" + compCellSymbol + "/" + NBRSYMBOL);
         if (listSize == boardSize && compCellSymbol == NBRSYMBOL) {
-            System.out.println("Hello world");
             setChanged();
             notifyObservers(1);
         }
     }
 
+    /**
+     * Fonction utilisée pour interdire la création de symboles proches par la diagonale
+     * Ils étaient souvent source de casse-tête irrésolvable
+     * @param c : La cellule à tester
+     * @return Vrai si la case n'a pas de voisins en diagonale, Faux sinon
+     */
     private boolean forbidDiagonal(Cell c) {
         int xCell = c.getX();
         int yCell = c.getY();
@@ -387,6 +490,11 @@ public class Model extends Observable {
         return true;
     }
 
+    /**
+     *
+     * @param cellSymbol
+     * @return
+     */
     private boolean acceptedNeighboor(CellSymbol cellSymbol) {
         int[] listMove = {-1, 0, 1};
         int compSymbol = 0;
@@ -403,6 +511,12 @@ public class Model extends Observable {
         return compSymbol <= 0;
     }
 
+    /**
+     * Permet de récupérer une case avec sa position
+     * @param x : La position en abscisse de la case choisie
+     * @param y : La position en ordonnée de la case choisie
+     * @return
+     */
     private Cell getCellInBoard(int x, int y) {
         Cell cell;
         try {

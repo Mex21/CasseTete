@@ -153,6 +153,10 @@ public class View extends Application {
         return EntryX + "_" + EntryY + "_" + ExitX + "_" + ExitY;
     }
 
+    /**
+     * Bouton permettant d'effacer le dernier chemin créée
+     * @param button
+     */
     private void ControllerOnClickUndo(Button button) {
         button.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -163,6 +167,10 @@ public class View extends Application {
         });
     }
 
+    /**
+     * Bouton permettant de recommencer une partie en générant de manière aléatoire les positions des symboles
+     * @param button
+     */
     private void ControllerOnClickNewGame(Button button) {
         button.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -173,6 +181,9 @@ public class View extends Application {
         });
     }
 
+    /**
+     * Affiche un message popup lorsque la condition de victoire est validée
+     */
     private void victoryPopup() {
         Stage popup = new Stage();
         popup.initModality(Modality.APPLICATION_MODAL);
@@ -197,6 +208,12 @@ public class View extends Application {
         popup.show();
     }
 
+    /**
+     * Fonction permettant de redimensionner la taille du plateau
+     * Une fenêtre apparait, demandant des tailles à entrer dans des champs
+     * Le tableau est mis à jour après la validation des tailles
+     * @param button : Le bouton à utiliser
+     */
     private void ControllerOnClickBoardSize(Button button){
         button.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -252,6 +269,9 @@ public class View extends Application {
         });
     }
 
+    /**
+     * On créée une GridPane pour y stocker le plateau de jeu
+     */
     private void GenerateGridPane(){
         for (int i = 0; i < x; i++) {
             for (int j = 0; j < y; j++) {
