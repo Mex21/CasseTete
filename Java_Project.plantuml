@@ -9,7 +9,7 @@ title __JAVA_PROJECT's Class Diagram__\n
   
 
   namespace CasseTete {
-    class CasseTete.Cell.CellEmpty {
+    class CasseTete.Cell.Cell.CellEmpty {
     }
   }
   
@@ -50,7 +50,7 @@ title __JAVA_PROJECT's Class Diagram__\n
   }
   
 
-  CasseTete.Cell.CellEmpty -up-|> CasseTete.Cell.Cell
+  CasseTete.Cell.Cell.CellEmpty -up-|> CasseTete.Cell.Cell
   CasseTete.Cell.CellPath -up-|> CasseTete.Cell.Cell
   CasseTete.Cell.CellSymbol -up-|> CasseTete.Cell.Cell
   CasseTete.Model -up-|> java.util.Observable

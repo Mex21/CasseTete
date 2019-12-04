@@ -1,6 +1,8 @@
 package CasseTete.Cell;
 
 
+import CasseTete.Cell.Cell;
+
 public class CellSymbol extends Cell {
     private String symbol;
 

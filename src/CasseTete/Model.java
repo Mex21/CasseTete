@@ -29,7 +29,8 @@ public class Model extends Observable {
 
 
     /**
-     * Fonction permettant la crétation d'un plateau de jeu vide
+     * Fonction permettant la création d'un plateau de jeu vide
+     *
      * @param x : Taille du plateau en abscisse
      * @param y : Taille du plateau en ordonnée
      */
@@ -51,6 +52,7 @@ public class Model extends Observable {
 
     /**
      * Fonction pemettant de générer un plateau de taille x * y
+     *
      * @param x : Taille du plateau en abscisse
      * @param y : Taille du plateau en ordonnée
      * @return Renvoie un tableau de cellules correspondant au tableau de jeu
@@ -58,28 +60,29 @@ public class Model extends Observable {
     public Cell[][] GenerateBoard(int x, int y) {
         CreateEmptyBoard(x, y);
         GenerateRandomSymbol();
+        
         return getBoard();
     }
 
     /**
-     * Fonction permettant de générer une position aléatoire pour tous les  symboles
+     * Fonction permettant de générer une position aléatoire pour tous les symboles
      * Utilise les fonctions de vérification pour éviter certaines positions problèmatique
      */
     private void GenerateRandomSymbol() {
         if (BOARDSIZE_X == 3 && BOARDSIZE_Y == 3) {
-            CellSymbol cellSymbol1 = new CellSymbol(0,0,"S1");
+            CellSymbol cellSymbol1 = new CellSymbol(0, 0, "S1");
             board[0][0] = cellSymbol1;
             setChanged();
             notifyObservers(cellSymbol1);
-            CellSymbol cellSymbol2 = new CellSymbol(2,0,"S2");
+            CellSymbol cellSymbol2 = new CellSymbol(2, 0, "S2");
             board[2][0] = cellSymbol2;
             setChanged();
             notifyObservers(cellSymbol2);
-            CellSymbol cellSymbol3 = new CellSymbol(2,2,"S2");
+            CellSymbol cellSymbol3 = new CellSymbol(2, 2, "S2");
             board[2][2] = cellSymbol3;
             setChanged();
             notifyObservers(cellSymbol3);
-            CellSymbol cellSymbol4 = new CellSymbol(1,2,"S1");
+            CellSymbol cellSymbol4 = new CellSymbol(1, 2, "S1");
             board[1][2] = cellSymbol4;
             setChanged();
             notifyObservers(cellSymbol4);
@@ -111,28 +114,11 @@ public class Model extends Observable {
                 }
             }
         }
-
-        //Random Fonction to do
-        /*CellSymbol cell = new CellSymbol(0, 0, O);
-        board[0][0] = cell;
-        setChanged();
-        notifyObservers(cell);
-        cell = new CellSymbol(0, 2, O);
-        board[0][2] = cell;
-        setChanged();
-        notifyObservers(cell);
-        cell = new CellSymbol(1, 0, X);
-        board[1][0] = cell;
-        setChanged();
-        notifyObservers(cell);
-        cell = new CellSymbol(2, 2, X);
-        board[2][2] = cell;
-        setChanged();
-        notifyObservers(cell);*/
     }
 
     /**
      * Fonction permettant de stocker la première case cliquée dans la liste temporaire
+     *
      * @param x : La position en abscisse de la case courante
      * @param y :La position en ordonnée de la case courante
      */
@@ -172,6 +158,7 @@ public class Model extends Observable {
 
     /**
      * Permet de vérfier si la case passée en paramètre est vide ou non
+     *
      * @param c : La cellule à tester
      * @return Retourne vrai si elle est vide, faux sinon
      */
@@ -185,6 +172,7 @@ public class Model extends Observable {
     /**
      * Fonction nous permettant de regarder la cellule sur laquelle la souris est (pendant un Drag) ainsi que déterminer le chemin en utilisant la case précédente
      * On effectue différents tests pour être sûr que la case courante est bien vide, que ce n'est pas un symbole ou déjà un chemin
+     *
      * @param x : La position en abscisse de la case courante
      * @param y : La position en ordonnée de la case courante
      */
@@ -269,6 +257,7 @@ public class Model extends Observable {
 
     /**
      * Fonction permettant la vérification entre deux symboles donnés
+     *
      * @param c1 : Le premier symbole à tester
      * @param c2 : Le second symbole à tester
      * @return Vrai si les deux symboles sont les mêmes, faux sinon
@@ -288,8 +277,9 @@ public class Model extends Observable {
     /**
      * On vérifie si la direction choisie avec la souris est valide
      * On empêche aussi les sauts de cases : Si le saut saute + d'une case, on retourne Faux, donc la diagonale ou la sortie de fenêtre ne marche pas.
+     *
      * @param previousCell : La case d'où vient le click
-     * @param currentCell : La case où se trouve le click actuellement
+     * @param currentCell  : La case où se trouve le click actuellement
      * @return Vrai si le saut est de 1 et qu'il s'agit d'une case vide, faux sinon
      */
     private boolean AcceptedJump(Cell previousCell, Cell currentCell) {
@@ -301,8 +291,9 @@ public class Model extends Observable {
 
     /**
      * Permet la génération du chemin en se basant sur les coordonnées de la case précedente
-     * @param x : La position en abscisse de la case courante
-     * @param y : La position en ordonnée de la case courante
+     *
+     * @param x            : La position en abscisse de la case courante
+     * @param y            : La position en ordonnée de la case courante
      * @param previousCell : La case précédente
      * @return Le nouveau chemin créée
      */
@@ -322,8 +313,9 @@ public class Model extends Observable {
     /**
      * On modifie l'aspect de la case précédente.
      * Exemple : On passe d'un chemin droit à un chemin courbé car on a tourné par rapport à l'endroit où on était avant
-     * @param x : La position en abscisse de la case courante
-     * @param y : La position en ordonnée de la case courante
+     *
+     * @param x            : La position en abscisse de la case courante
+     * @param y            : La position en ordonnée de la case courante
      * @param previousCell : La case précédente
      */
     private void ModifyPreviousCell(int x, int y, CellPath previousCell) {
@@ -335,6 +327,7 @@ public class Model extends Observable {
 
     /**
      * Fonction permettant de vérifier la présence d'une cellule dans la liste
+     *
      * @param cell : La cellule à tester
      * @return Vrai si la cellule est dans la liste, faux sinon
      */
@@ -350,6 +343,7 @@ public class Model extends Observable {
     /**
      * Fonction permettant de vérifier si la cellule en paramètre est dans la liste temporaire.
      * On vérifie aussi qu'il s'agit d'un CellSymbol avant d'effectuer le test.
+     *
      * @param cell : La cellule à tester
      * @return Vrai si la cellule est dans la liste temporaire, faux sinon
      */
@@ -391,6 +385,7 @@ public class Model extends Observable {
 
     /**
      * Fonction permettant de supprimer la case passée en paramètre
+     *
      * @param c : La case à supprimer
      */
     private void deleteCellPath(Cell c) {
@@ -403,6 +398,7 @@ public class Model extends Observable {
 
     /**
      * Fonction permettant de supprimer un chemin entier (et le remet à 0 par un appel à resetCellPath)
+     *
      * @param cellPath : Le chemin à supprimer
      */
     private void removeCellPath(CellPath cellPath) {
@@ -416,6 +412,7 @@ public class Model extends Observable {
 
     /**
      * Fonction permettant de remettre toutes les cases d'un chemin à 0 (case vide)
+     *
      * @param cell : Le chemin à reset
      */
     private void resetCellPath(CellPath cell) {
@@ -433,15 +430,6 @@ public class Model extends Observable {
      * Si c'est le case, l'utilisateur a gagné.
      */
     private void hasWon() {
-        /*for(int i = 0 ; i<= BOARDSIZE_X; i++){
-            for(int j = 0; j<=BOARDSIZE_Y; j++){
-                if(!isEmpty(board[i][j])){
-                    if((((CellSymbol) pathList.get(0)).getSymbol().equals(((CellSymbol) board[i][j]).getSymbol()))  && (((CellSymbol)board[i][j]).getSymbol()).equals(((CellSymbol) pathList.lastIndexOf((CellSymbol))))) {
-                        System.out.println("Hello world");
-                    }
-                }
-            }
-        }*/
         int listSize = pathList.size();
         int boardSize = BOARDSIZE_X * BOARDSIZE_Y;
         int compCellSymbol = 0;
@@ -460,6 +448,7 @@ public class Model extends Observable {
     /**
      * Fonction utilisée pour interdire la création de symboles proches par la diagonale
      * Ils étaient souvent source de casse-tête irrésolvable
+     *
      * @param c : La cellule à tester
      * @return Vrai si la case n'a pas de voisins en diagonale, Faux sinon
      */
@@ -491,9 +480,10 @@ public class Model extends Observable {
     }
 
     /**
+     * Permet de verifier si il y a des symbole dans le voisinage de la case en parametre
      *
      * @param cellSymbol
-     * @return
+     * @return Vrai si il plus d'une certaine valeur sinon return false
      */
     private boolean acceptedNeighboor(CellSymbol cellSymbol) {
         int[] listMove = {-1, 0, 1};
@@ -513,9 +503,10 @@ public class Model extends Observable {
 
     /**
      * Permet de récupérer une case avec sa position
+     *
      * @param x : La position en abscisse de la case choisie
      * @param y : La position en ordonnée de la case choisie
-     * @return
+     * @return la cellule desiré ou null si elle n'existe pas
      */
     private Cell getCellInBoard(int x, int y) {
         Cell cell;

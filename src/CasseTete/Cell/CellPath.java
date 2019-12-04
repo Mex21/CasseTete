@@ -1,5 +1,6 @@
 package CasseTete.Cell;
 
+import CasseTete.Cell.Cell;
 import CasseTete.PathCoordinate;
 
 public class CellPath extends Cell {

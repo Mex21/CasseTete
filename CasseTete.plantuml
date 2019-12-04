@@ -3,25 +3,19 @@
 title __JAVA_PROJECT's Class Diagram__\n
 
   namespace CasseTete {
-    namespace Cell {
-      abstract class CasseTete.Cell.Cell {
-      }
+    abstract class CasseTete.Cell.Cell {
     }
   }
   
 
   namespace CasseTete {
-    namespace Cell {
-      class CasseTete.Cell.CellPath {
-      }
+    class CasseTete.Cell.CellPath {
     }
   }
   
 
   namespace CasseTete {
-    namespace Cell {
-      class CasseTete.Cell.CellSymbol {
-      }
+    class CasseTete.Cell.CellSymbol {
     }
   }
   

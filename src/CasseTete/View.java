@@ -8,7 +8,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -19,11 +18,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.awt.*;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -102,6 +99,10 @@ public class View extends Application {
         });
     }
 
+    /**
+     * Ajouter les EventHandler pour les parametres donnés
+     * @param imageView
+     */
     private void setDDOnImageView(ImageView imageView, int x, int y) {
         ControllerOnDragDetected(imageView, x, y);
         ControllerOnDragEntered(imageView, x, y);
@@ -145,6 +146,10 @@ public class View extends Application {
         });
     }
 
+    /**
+     * Converti un chemin en coordonnées pour l'associer a une image
+     * @param cell
+     */
     private String CellPathToImg(CellPath cell) {
         int EntryX = cell.getPathEntry().getX();
         int EntryY = cell.getPathEntry().getY();

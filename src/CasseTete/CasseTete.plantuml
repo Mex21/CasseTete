@@ -3,6 +3,41 @@
 title __CASSETETE's Class Diagram__\n
 
   namespace CasseTete {
+    abstract class CasseTete.Cell.Cell {
+        - x : int
+        - y : int
+        + Cell()
+        + getX()
+        + getY()
+        + setX()
+        + setY()
+        + toString()
+    }
+  }
+  
+
+  namespace CasseTete {
+    class CasseTete.Cell.CellPath {
+        + CellPath()
+        + getPathEntry()
+        + getPathExit()
+        + setPathEntry()
+        + setPathExit()
+    }
+  }
+  
+
+  namespace CasseTete {
+    class CasseTete.Cell.CellSymbol {
+        - symbol : String
+        + CellSymbol()
+        + getSymbol()
+        + setSymbol()
+    }
+  }
+  
+
+  namespace CasseTete {
     class CasseTete.Model {
         {static} - BOARDSIZE_X : int
         {static} - BOARDSIZE_Y : int
@@ -12,6 +47,7 @@ title __CASSETETE's Class Diagram__\n
         - boardTemp : Cell[][]
         - pathList : ArrayList<Cell>
         - pathListTemp : ArrayList<Cell>
+        + CreateEmptyBoard()
         + GenerateBoard()
         + Model()
         + OnClickUndo()
@@ -22,12 +58,14 @@ title __CASSETETE's Class Diagram__\n
         - AcceptedJump()
         - CellInsidePathList()
         - CellSymbolInsidePathListTemp()
-        - CreateEmptyBoard()
         - GeneratePath()
         - GenerateRandomSymbol()
         - ModifyPreviousCell()
+        - acceptedNeighboor()
         - checkSymbol()
         - deleteCellPath()
+        - forbidDiagonal()
+        - getCellInBoard()
         - hasWon()
         - isEmpty()
         - removeCellPath()
@@ -51,22 +89,30 @@ title __CASSETETE's Class Diagram__\n
 
   namespace CasseTete {
     class CasseTete.View {
+        ~ board : Cell[][]
+        - gridPane : GridPane
         - x : int
         - y : int
         + View()
         + start()
         - CellPathToImg()
+        - ControllerOnClickBoardSize()
         - ControllerOnClickNewGame()
         - ControllerOnClickUndo()
         - ControllerOnDragDetected()
         - ControllerOnDragDone()
         - ControllerOnDragEntered()
+        - GenerateGridPane()
         - setDDOnImageView()
         - victoryPopup()
     }
   }
   
 
+  CasseTete.Cell.CellPath -up-|> CasseTete.Cell.Cell
+  CasseTete.Cell.CellPath o-- CasseTete.PathCoordinate : pathEntry
+  CasseTete.Cell.CellPath o-- CasseTete.PathCoordinate : pathExit
+  CasseTete.Cell.CellSymbol -up-|> CasseTete.Cell.Cell
   CasseTete.Model -up-|> java.util.Observable
   CasseTete.View -up-|> javafx.application.Application
   CasseTete.View o-- CasseTete.Model : model
